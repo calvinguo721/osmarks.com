@@ -1,0 +1,6 @@
+# Wrangler 本地缓存，禁止入库
+.wrangler/
+
+# 系统杂物
+Thumbs.db
+Desktop.ini
