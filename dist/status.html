@@ -1,0 +1,73 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>osmarks 诊断页</title><style>
+body{font-family:Consolas,monospace;background:#f5f5f0;color:#111;margin:0;padding:24px;line-height:1.7}
+h1{font-size:22px;margin:0 0 6px}.sub{color:#666;font-size:13px;margin-bottom:18px}
+.box{background:#fff;border:2px solid #ddd;border-radius:10px;padding:14px 18px;margin-bottom:14px;max-width:760px}
+.ok{color:#0a7d32;font-weight:bold}.bad{color:#c62828;font-weight:bold}.warn{color:#b26a00;font-weight:bold}
+img.t{height:60px;border:1px solid #ccc;margin:4px;vertical-align:middle}
+table{border-collapse:collapse;font-size:13px;width:100%}td,th{border:1px solid #ddd;padding:4px 8px;text-align:left}
+.big{font-size:17px}
+</style></head><body>
+<h1>osmarks 访问诊断</h1>
+<div class="sub">把本页每个方框里的结论发给 WorkBuddy 即可，或直接截图整页。</div>
+
+<div class="box big" id="b1">① 环境检测中…</div>
+
+<div class="box">
+<b>② 图片加载测试（能看到小图 = 通过）</b><br>
+相对路径 JPG：<img class="t" src="assets/img/night-a.jpg" onload="mark(this,1)" onerror="mark(this,0)">
+绝对路径 JPG：<img class="t" src="/assets/img/night-a.jpg" onload="mark(this,1)" onerror="mark(this,0)">
+旧版大 PNG：<img class="t" src="assets/img/night-a.png" onload="mark(this,1)" onerror="mark(this,0)">
+内嵌预览图：<img class="t" src="assets/img/night-preview.jpg" onload="mark(this,1)" onerror="mark(this,0)">
+</div>
+
+<div class="box" id="b3"><b>③ 服务器返回的首页版本</b><br><span id="v3">检测中…</span></div>
+
+<div class="box" id="b4"><b>④ 结论</b><br><span id="v4">汇总中…</span></div>
+
+<script>
+function mark(el,ok){el.style.outline=ok?'3px solid #0a7d32':'3px solid #c62828';el.dataset.ok=ok;sum()}
+window._res={};
+(function(){
+var r=window._res;
+r.protocol=location.protocol;
+r.ua=navigator.userAgent;
+document.getElementById('b1').innerHTML='① 环境：<b>'+r.protocol+'</b> 访问，页面 JS 正常运行。'
++(r.protocol==='file:'?'<span class="bad">你打开的是本地文件，不是线上网站！请改用浏览器访问 https://osmarks.com</span>':'如果是 https 就正常。');
+var f=new XMLHttpRequest();
+f.open('GET','/?v=diag'+Date.now(),true);
+f.onload=function(){
+var t=f.responseText||'';
+var hasPerson=/var PERSON=/.test(t);
+var hasInline=/data:image\/jpeg;base64,/.test(t);
+var isOldSitev2=/Find the work worth marking/.test(t);
+var isDify=/Dify|RAGFlow/i.test(t.slice(0,3000));
+var v;
+if(isOldSitev2)v='<span class="bad">旧版 site-v2！你的链路在给你喂早上的旧部署</span>';
+else if(isDify)v='<span class="bad">更旧的 Dify 版</span>';
+else if(hasPerson&&hasInline)v='<span class="ok">最新加固版（含内嵌保底图）✓</span>';
+else if(hasPerson)v='<span class="warn">今天上午的版本（有真人图脚本但无内嵌保底）</span>';
+else v='<span class="bad">未知版本，无真人图脚本</span>';
+document.getElementById('v3').innerHTML='HTTP '+f.status+'，首页内容判定：'+v
++'<br>含 PERSON 脚本：'+(hasPerson?'<span class="ok">有</span>':'<span class="bad">无</span>')
++'｜含内嵌保底图：'+(hasInline?'<span class="ok">有</span>':'<span class="bad">无</span>');
+sum();
+};
+f.onerror=function(){document.getElementById('v3').innerHTML='<span class="bad">首页请求失败</span>';sum()};
+f.send();
+})();
+function sum(){
+setTimeout(function(){
+var imgs=document.querySelectorAll('img.t');
+var ok=0,tot=0;imgs.forEach(function(i){tot++;if(i.dataset.ok==='1')ok++});
+var proto=location.protocol;
+var msg='图片 '+ok+'/'+tot+' 张加载成功。';
+if(ok===tot)msg+='<span class="ok">全部通过！你的访问链路完全正常，回首页强刷(Ctrl+F5)必有图。</span>';
+else if(ok>0)msg+='<span class="warn">部分成功，失败的那张路径有问题，把本页截图发 WorkBuddy。</span>';
+else msg+=proto==='file:'
+?'<span class="bad">你在看本地文件。请打开浏览器访问 https://osmarks.com</span>'
+:'<span class="bad">所有图片都失败 = 你的浏览器/代理在拦图片。关掉广告拦截扩展或换无痕窗口再试。</span>';
+document.getElementById('v4').innerHTML=msg;
+},300);
+}
+</script>
+</body></html>
