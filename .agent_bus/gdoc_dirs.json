@@ -1,0 +1,19 @@
+{
+  "dirs": {
+    "index.html.gdoc": [
+      "ERR ENOENT: no such file or directory, scandir 'G:\\我的云端硬盘\\osmarks_bridge\\inbox\\index.html.gdoc'"
+    ],
+    "timesfm.html.gdoc": [
+      "ERR ENOENT: no such file or directory, scandir 'G:\\我的云端硬盘\\osmarks_bridge\\inbox\\timesfm.html.gdoc'"
+    ],
+    "build_and_deploy.ps1.gdoc": [
+      "ERR ENOENT: no such file or directory, scandir 'G:\\我的云端硬盘\\osmarks_bridge\\inbox\\build_and_deploy.ps1.gdoc'"
+    ],
+    "timesfm_complete_geo.html.gdoc": [
+      "ERR ENOENT: no such file or directory, scandir 'G:\\我的云端硬盘\\osmarks_bridge\\inbox\\timesfm_complete_geo.html.gdoc'"
+    ],
+    "build_geo_keyframes.py.gdoc": [
+      "ERR ENOENT: no such file or directory, scandir 'G:\\我的云端硬盘\\osmarks_bridge\\inbox\\build_geo_keyframes.py.gdoc'"
+    ]
+  }
+}

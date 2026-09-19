@@ -1,0 +1,19 @@
+{
+  "gDriveRoot": true,
+  "bridgeRoot": true,
+  "inbox": true,
+  "outbox": true,
+  "inboxFiles": [
+    "task_build_site_003.json",
+    "index.html.gdoc",
+    "timesfm.html.gdoc",
+    "build_and_deploy.ps1.gdoc",
+    "timesfm_complete_geo.html.gdoc",
+    "build_geo_keyframes.py.gdoc"
+  ],
+  "outboxFiles": [
+    "result_test_001.json",
+    "current_design",
+    "result_design.json"
+  ]
+}

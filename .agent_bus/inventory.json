@@ -1,0 +1,35 @@
+{
+  "osmarksTree": [
+    "[D] C:/osmarks/.agent_bus",
+    "[F] C:/osmarks/.agent_bus/check_inbox.js (1040B)",
+    "[F] C:/osmarks/.agent_bus/check_inbox_result.json (388B)",
+    "[D] C:/osmarks/.agent_bus/errors",
+    "[D] C:/osmarks/.agent_bus/inbox",
+    "[F] C:/osmarks/.agent_bus/inbox/task_build_site_003.json (945B)",
+    "[F] C:/osmarks/.agent_bus/inventory.js (1446B)",
+    "[D] C:/osmarks/.agent_bus/outbox",
+    "[D] C:/osmarks/.agent_bus/processing",
+    "[F] C:/osmarks/.agent_bus/read_task_003.js (362B)",
+    "[F] C:/osmarks/.agent_bus/task_003_content.json (945B)",
+    "[F] C:/osmarks/.agent_bus/watcher.js (1305B)",
+    "[F] C:/osmarks/.agent_bus/watcher.log (195B)",
+    "[D] C:/osmarks/dist",
+    "[F] C:/osmarks/dist/timesfm.html (347B)"
+  ],
+  "currentDesign": [
+    "[D] G:/我的云端硬盘/osmarks_bridge/outbox/current_design/.agent_bus",
+    "[D] G:/我的云端硬盘/osmarks_bridge/outbox/current_design/.agent_bus/errors",
+    "[D] G:/我的云端硬盘/osmarks_bridge/outbox/current_design/.agent_bus/inbox",
+    "[D] G:/我的云端硬盘/osmarks_bridge/outbox/current_design/.agent_bus/outbox",
+    "[D] G:/我的云端硬盘/osmarks_bridge/outbox/current_design/.agent_bus/processing",
+    "[D] G:/我的云端硬盘/osmarks_bridge/outbox/current_design/dist",
+    "[F] G:/我的云端硬盘/osmarks_bridge/outbox/current_design/dist/timesfm.html (347B)"
+  ],
+  "gdocPointers": {
+    "index.html.gdoc": "ERR: EISDIR: illegal operation on a directory, read",
+    "timesfm.html.gdoc": "ERR: EISDIR: illegal operation on a directory, read",
+    "build_and_deploy.ps1.gdoc": "ERR: EISDIR: illegal operation on a directory, read",
+    "timesfm_complete_geo.html.gdoc": "ERR: EISDIR: illegal operation on a directory, read",
+    "build_geo_keyframes.py.gdoc": "ERR: EISDIR: illegal operation on a directory, read"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "[OK] index.html 28847 bytes",
+    "[OK] timesfm.html 30300 bytes",
+    "[OK] JSON-LD 解析成功 @graph 8 个节点",
+    "[OK] AI 八股词零命中",
+    "[OK] 中文文案无半角冒号/破折号"
+  ],
+  "jsonldTypes": "WebSite, Organization, BreadcrumbList, TechArticle, SoftwareApplication, HowTo, FAQPage, VideoObject",
+  "bannedHits": [],
+  "punctHits": []
+}

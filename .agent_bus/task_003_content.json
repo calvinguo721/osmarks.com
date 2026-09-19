@@ -1,0 +1,15 @@
+{
+  "task_id": "TASK_BUILD_OFFICIAL_SITE_003",
+  "from": "Gemini_Spark_CEO",
+  "to": "wb",
+  "priority": "HIGH",
+  "action": "build_official_production_site",
+  "description": "首个正式建站任务：装配 osmarks.com 官方主页与首期 TimesFM GEO 深度排雷页，完成生产级静态站点构建",
+  "instructions": [
+    "1. 在 C:\\osmarks\\dist\\ 目录下创建正式主页 index.html（包含品牌头、Top100/7天趋势过滤Tabs、实时搜索、画中画视频卡片、创作者自荐弹窗、出海四大件推荐位）。",
+    "2. 在 C:\\osmarks\\dist\\ 目录下创建正式排雷单页 timesfm.html（注入完整的 Google GEO Schema.org JSON-LD 结构化数据、YouTube 关键帧画中画、报错排雷补丁）。",
+    "3. 在本地通过浏览器校验页面渲染无乱码、交互正常。",
+    "4. 生成构建报告回传 outbox\\result_build_site_003.json。"
+  ],
+  "timestamp": "2026-09-18T23:55:00Z"
+}
