@@ -1,622 +1,81 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>开源马克斯 osmarks.com · 普通人视角的 AI 工具严选与避坑排雷</title>
-<meta name="description" content="开源马克斯是全网首席 AI 踩坑大师建立的 AI 工具严选站。只收历史总榜 Top100 和近 7 天热议前 100，测试排雷永久免费，不接软文不收充钱上榜。每条避坑短评都是真实踩坑换来的。">
-<meta name="keywords" content="AI工具推荐,AI工具避坑,AI工具评测,开源马克斯,osmarks,AI排雷,AI工具排行榜">
-<meta property="og:title" content="开源马克斯 · 普通人视角的 AI 工具严选">
-<meta property="og:description" content="踩过 500+ 个坑之后，我把真正能打、稳定、不坑钱的工具挑出来给你。测试排雷永久免费，不接软文。">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://osmarks.com/">
-<link rel="canonical" href="https://osmarks.com/">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23ff5c33'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='%23fff' font-family='sans-serif' font-weight='bold'%3EM%3C/text%3E%3C/svg%3E">
-<style>
-:root{
-  --bg:#090d16;
-  --bg2:#0e1422;
-  --card:#131b2e;
-  --card-hover:#182238;
-  --line:#233047;
-  --text:#e8edf5;
-  --muted:#8b98ad;
-  --accent:#ff5c33;
-  --accent2:#ffb020;
-  --green:#3ecf8e;
-  --radius:14px;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
-  line-height:1.6;
-  -webkit-font-smoothing:antialiased;
-}
-a{color:inherit;text-decoration:none}
-button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
-.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
-
-/* 品牌头 */
-header.site{
-  position:sticky;top:0;z-index:50;
-  background:rgba(9,13,22,.86);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--line);
-}
-.site .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px}
-.brand .logo{
-  width:34px;height:34px;border-radius:9px;
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  display:flex;align-items:center;justify-content:center;
-  font-size:19px;color:#fff;font-weight:900;
-}
-.brand .tld{color:var(--muted);font-weight:600;font-size:15px;margin-left:2px}
-nav.top{display:flex;gap:6px}
-nav.top a{
-  padding:8px 14px;border-radius:9px;font-size:14px;color:var(--muted);
-  transition:all .18s;
-}
-nav.top a:hover{color:var(--text);background:var(--card)}
-nav.top a.hot{color:var(--accent2)}
-@media(max-width:720px){nav.top{display:none}}
-
-/* Hero */
-.hero{padding:72px 0 48px;text-align:center;position:relative;overflow:hidden}
-.hero::before{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(600px 260px at 50% -60px,rgba(255,92,51,.16),transparent 70%);
-}
-.hero .kicker{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:6px 16px;border:1px solid var(--line);border-radius:999px;
-  font-size:13px;color:var(--accent2);background:rgba(255,176,32,.06);
-  margin-bottom:22px;
-}
-.hero h1{font-size:clamp(30px,5.4vw,52px);font-weight:900;letter-spacing:-.5px;line-height:1.25}
-.hero h1 .grad{
-  background:linear-gradient(100deg,var(--accent),var(--accent2));
-  -webkit-background-clip:text;background-clip:text;color:transparent;
-}
-.hero p.sub{max-width:640px;margin:18px auto 0;color:var(--muted);font-size:16.5px}
-.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:40px;text-align:left}
-@media(max-width:760px){.rules{grid-template-columns:1fr}}
-.rule{
-  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-  padding:20px 22px;transition:all .2s;
-}
-.rule:hover{border-color:#33456a;transform:translateY(-2px)}
-.rule .rt{font-weight:800;font-size:15.5px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
-.rule .rt .dot{width:8px;height:8px;border-radius:50%}
-.rule p{font-size:13.5px;color:var(--muted)}
-.rule.r1 .dot{background:var(--green)} .rule.r2 .dot{background:var(--accent2)} .rule.r3 .dot{background:var(--accent)}
-
-/* Tabs + 搜索 */
-.toolbar{padding:26px 0 18px;position:sticky;top:64px;z-index:40;background:linear-gradient(var(--bg),var(--bg) 82%,transparent)}
-.toolbar .wrap{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.tabs{display:flex;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:4px;gap:4px}
-.tab{
-  padding:8px 18px;border-radius:8px;font-size:14px;color:var(--muted);font-weight:600;
-  transition:all .18s;white-space:nowrap;
-}
-.tab:hover{color:var(--text)}
-.tab.on{background:linear-gradient(135deg,var(--accent),#ff7a4d);color:#fff}
-.searchbox{
-  flex:1;min-width:220px;display:flex;align-items:center;gap:10px;
-  background:var(--card);border:1px solid var(--line);border-radius:11px;padding:9px 14px;
-  transition:border-color .18s;
-}
-.searchbox:focus-within{border-color:var(--accent)}
-.searchbox svg{flex-shrink:0;opacity:.5}
-.searchbox input{
-  flex:1;background:none;border:none;outline:none;color:var(--text);font-size:14.5px;min-width:0;
-}
-.searchbox input::placeholder{color:var(--muted)}
-.count{font-size:13px;color:var(--muted);white-space:nowrap}
-.count b{color:var(--accent2)}
-
-/* 工具卡 */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;padding-bottom:26px}
-@media(max-width:680px){.grid{grid-template-columns:1fr}}
-.tool{
-  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-  padding:18px 20px;position:relative;transition:all .2s;
-  display:flex;flex-direction:column;gap:9px;
-}
-.tool:hover{background:var(--card-hover);border-color:#33456a;transform:translateY(-2px)}
-.tool .row1{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.tool h3{font-size:16px;font-weight:800}
-.tool .rank{
-  flex-shrink:0;font-size:12px;font-weight:800;color:var(--accent2);
-  background:rgba(255,176,32,.09);border:1px solid rgba(255,176,32,.25);
-  padding:2px 9px;border-radius:999px;
-}
-.tool .cat{font-size:12px;color:var(--muted)}
-.tool .desc{font-size:13.5px;color:var(--muted)}
-.tool .verdict{
-  font-size:13.5px;color:var(--text);
-  background:rgba(255,92,51,.07);border-left:3px solid var(--accent);
-  padding:8px 12px;border-radius:0 8px 8px 0;
-}
-.tool .tags{display:flex;gap:6px;flex-wrap:wrap}
-.tool .tag{font-size:11.5px;color:var(--muted);background:var(--bg2);border:1px solid var(--line);padding:2px 9px;border-radius:999px}
-.tool .tag.free{color:var(--green);border-color:rgba(62,207,142,.3)}
-.badge7{
-  position:absolute;top:-9px;right:14px;font-size:11px;font-weight:800;color:#090d16;
-  background:linear-gradient(120deg,var(--accent2),#ffd066);padding:3px 10px;border-radius:999px;
-}
-.empty{grid-column:1/-1;text-align:center;padding:50px 0;color:var(--muted)}
-
-/* 数据说明条 */
-.demo-note{
-  margin:6px 0 10px;font-size:13px;color:var(--muted);
-  background:var(--bg2);border:1px dashed var(--line);border-radius:10px;
-  padding:10px 16px;display:flex;gap:8px;align-items:center;
-}
-
-/* 视频区 */
-.video-sec{padding:44px 0}
-.sec-title{font-size:24px;font-weight:900;margin-bottom:6px}
-.sec-sub{color:var(--muted);font-size:14px;margin-bottom:22px}
-.video-card{
-  display:grid;grid-template-columns:1.5fr 1fr;gap:0;overflow:hidden;
-  border:1px solid var(--line);border-radius:var(--radius);background:var(--card);
-}
-@media(max-width:760px){.video-card{grid-template-columns:1fr}}
-.video-shell{position:relative;aspect-ratio:16/9;background:#05080f}
-.video-shell video{width:100%;height:100%;object-fit:cover;display:block}
-.video-poster{
-  position:absolute;inset:0;display:flex;flex-direction:column;gap:12px;
-  align-items:center;justify-content:center;cursor:pointer;
-  background:
-    radial-gradient(400px 200px at 70% 30%,rgba(255,92,51,.18),transparent),
-    linear-gradient(160deg,#0c1322,#05080f);
-}
-.video-poster .play{
-  width:66px;height:66px;border-radius:50%;
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 8px 30px rgba(255,92,51,.4);transition:transform .2s;
-}
-.video-poster:hover .play{transform:scale(1.08)}
-.video-meta{padding:24px;display:flex;flex-direction:column;gap:12px;justify-content:center}
-.video-meta .vt{font-size:17px;font-weight:800}
-.video-meta p{font-size:13.5px;color:var(--muted)}
-.pnp-btn{
-  align-self:flex-start;padding:9px 18px;border-radius:9px;font-size:13.5px;font-weight:700;
-  background:var(--bg2);border:1px solid var(--line);color:var(--text);transition:all .18s;
-  display:inline-flex;gap:7px;align-items:center;
-}
-.pnp-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
-.pnp-btn:disabled{opacity:.45;cursor:not-allowed}
-
-/* 出海四大件 */
-.abroad{padding:44px 0 30px}
-.abroad-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-@media(max-width:860px){.abroad-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:520px){.abroad-grid{grid-template-columns:1fr}}
-.ab{
-  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-  padding:20px;transition:all .2s;position:relative;
-}
-.ab:hover{border-color:#33456a;transform:translateY(-2px)}
-.ab .ico{font-size:26px;margin-bottom:10px}
-.ab h4{font-size:15px;font-weight:800;margin-bottom:6px}
-.ab p{font-size:12.5px;color:var(--muted);margin-bottom:10px}
-.ab .soon{font-size:11.5px;color:var(--accent2);font-weight:700}
-.ab .aff{position:absolute;top:12px;right:12px;font-size:10.5px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 8px}
-
-/* 自荐区 */
-.suggest{padding:44px 0 20px}
-.suggest-box{
-  background:linear-gradient(135deg,rgba(255,92,51,.1),rgba(255,176,32,.06));
-  border:1px solid rgba(255,92,51,.3);border-radius:var(--radius);
-  padding:34px 30px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
-}
-.suggest-box h3{font-size:20px;font-weight:900;margin-bottom:8px}
-.suggest-box p{font-size:13.5px;color:var(--muted);max-width:560px}
-.suggest-btn{
-  padding:13px 30px;border-radius:11px;font-size:15px;font-weight:800;color:#fff;
-  background:linear-gradient(135deg,var(--accent),#ff7a4d);
-  box-shadow:0 6px 22px rgba(255,92,51,.35);transition:transform .18s;
-  white-space:nowrap;
-}
-.suggest-btn:hover{transform:translateY(-2px)}
-
-/* Footer */
-footer.site{margin-top:50px;border-top:1px solid var(--line);padding:36px 0 46px;background:var(--bg2)}
-footer .wrap{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap}
-footer .col{font-size:13px;color:var(--muted)}
-footer .col b{display:block;color:var(--text);margin-bottom:9px;font-size:14px}
-footer a:hover{color:var(--text)}
-footer .law{font-size:12px;color:#5b6880;margin-top:6px}
-
-/* 弹窗 */
-.modal-mask{
-  position:fixed;inset:0;z-index:100;background:rgba(4,7,13,.7);backdrop-filter:blur(4px);
-  display:none;align-items:center;justify-content:center;padding:20px;
-}
-.modal-mask.open{display:flex}
-.modal{
-  width:100%;max-width:520px;background:var(--card);border:1px solid var(--line);
-  border-radius:18px;padding:28px;position:relative;max-height:90vh;overflow-y:auto;
-  animation:pop .22s ease;
-}
-@keyframes pop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
-.modal h3{font-size:19px;font-weight:900;margin-bottom:6px}
-.modal .msub{font-size:13px;color:var(--muted);margin-bottom:20px}
-.modal .close{
-  position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;
-  display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:18px;
-}
-.modal .close:hover{background:var(--bg2);color:var(--text)}
-.field{margin-bottom:14px}
-.field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text)}
-.field input,.field textarea,.field select{
-  width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:9px;
-  padding:10px 13px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:border-color .18s;
-}
-.field input:focus,.field textarea:focus{border-color:var(--accent)}
-.field textarea{resize:vertical;min-height:84px}
-.modal .submit{
-  width:100%;padding:13px;border-radius:10px;font-size:15px;font-weight:800;color:#fff;
-  background:linear-gradient(135deg,var(--accent),#ff7a4d);margin-top:6px;
-}
-.modal .done{
-  display:none;text-align:center;padding:26px 6px;
-}
-.modal .done .big{font-size:40px;margin-bottom:12px}
-.modal .done p{font-size:14px;color:var(--muted);margin-bottom:16px}
-.modal .done .copytip{
-  font-size:13px;color:var(--green);background:rgba(62,207,142,.08);
-  border:1px solid rgba(62,207,142,.3);border-radius:9px;padding:10px 14px;margin-bottom:16px;
-  word-break:break-all;text-align:left;display:none;
-}
-.copy-btn{
-  padding:10px 22px;border-radius:9px;font-size:13.5px;font-weight:700;
-  background:var(--bg2);border:1px solid var(--line);color:var(--text);
-}
-.copy-btn:hover{border-color:var(--green);color:var(--green)}
-
-/* toast */
-.toast{
-  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);
-  background:var(--card);border:1px solid var(--green);color:var(--text);
-  padding:12px 22px;border-radius:11px;font-size:14px;z-index:200;
-  opacity:0;transition:all .3s;pointer-events:none;
-}
-.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>osmarks — Find the work worth marking</title>
+  <meta name="description" content="osmarks.com redesign concept: discover open-source AI work with a clear trail of evidence.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23091014'/%3E%3Cpath d='M17 16h30v9H27v6h16v9H27v8h20v9H17z' fill='%23d9ff3f'/%3E%3C/svg%3E">
+  <style>
+    :root{--ink:#091014;--paper:#e8ece4;--paper-2:#dce4db;--muted:#66716d;--line:rgba(9,16,20,.16);--lime:#d9ff3f;--blue:#1647ff;--rose:#ee5b63;--white:#f7faf4;--shadow:0 20px 50px rgba(6,16,20,.13)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,"Helvetica Neue","PingFang SC","Microsoft YaHei",system-ui,sans-serif;line-height:1.45}a{color:inherit;text-decoration:none}button{font:inherit;color:inherit}
+    .shell{max-width:1320px;margin:auto;padding:0 30px}.topline{height:32px;background:var(--ink);color:#c5d0cb;font-size:11px;letter-spacing:.06em;display:flex;align-items:center}.topline .shell{width:100%;display:flex;justify-content:space-between;gap:16px}.topline strong{color:var(--lime);font-weight:700}.topline span:last-child{color:#9ea9a4}
+    header{border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(232,236,228,.9);backdrop-filter:blur(16px);z-index:5}.nav{height:76px;display:flex;align-items:center;justify-content:space-between}.wordmark{font-size:25px;font-weight:850;letter-spacing:-.095em}.wordmark i{font-style:normal;color:var(--blue)}.navlinks{display:flex;align-items:center;gap:25px;font-size:13px;color:#44504d}.navlinks a:hover{color:var(--blue)}.nav-action{border:1px solid var(--ink);padding:10px 15px;border-radius:999px;background:var(--ink);color:var(--white);cursor:pointer}.nav-action:hover{background:var(--blue);border-color:var(--blue)}
+    .hero{min-height:710px;display:grid;grid-template-columns:1.12fr .88fr;gap:46px;align-items:center;padding:72px 0 86px}.kicker{display:flex;align-items:center;gap:10px;color:var(--blue);font-size:11px;font-weight:800;letter-spacing:.17em;text-transform:uppercase}.kicker:before{content:"";width:28px;height:2px;background:var(--blue)}h1{font-size:clamp(56px,8vw,116px);line-height:.91;letter-spacing:-.105em;max-width:760px;margin:22px 0 28px;font-weight:850}h1 em{font-style:normal;color:var(--blue)}.hero-copy{max-width:590px;font-size:20px;line-height:1.42;color:#3f4b47}.hero-copy strong{color:var(--ink)}.hero-actions{display:flex;gap:11px;align-items:center;margin-top:31px}.button{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--ink);border-radius:999px;padding:13px 18px;font-size:13px;font-weight:750;cursor:pointer;background:transparent}.button.primary{background:var(--blue);color:white;border-color:var(--blue)}.button.primary:hover{background:var(--ink);border-color:var(--ink)}.button:hover{background:var(--white)}.hero-meta{display:flex;gap:27px;margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}.hero-meta b{display:block;color:var(--ink);font-size:18px;letter-spacing:-.04em}.hero-meta span{display:block;margin-top:2px}
+    .signal-wrap{position:relative}.signal{background:var(--ink);color:var(--white);min-height:510px;padding:25px;border-radius:3px;box-shadow:var(--shadow);position:relative;overflow:hidden}.signal:after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,transparent 47%,rgba(22,71,255,.35) 48%,transparent 49%),linear-gradient(35deg,transparent 54%,rgba(217,255,63,.22) 55%,transparent 56%);background-size:170px 170px;opacity:.7;pointer-events:none}.signal-head{display:flex;justify-content:space-between;position:relative;z-index:1;font-size:11px;color:#9aa8a1;letter-spacing:.11em;text-transform:uppercase}.live-dot{display:flex;align-items:center;gap:6px;color:var(--lime)}.live-dot:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 4px rgba(217,255,63,.14)}.signal-title{position:relative;z-index:1;margin-top:78px;font-size:clamp(31px,4vw,54px);line-height:.97;letter-spacing:-.08em;max-width:390px}.signal-title em{font-style:normal;color:var(--lime)}.signal-note{position:relative;z-index:1;max-width:285px;margin-top:20px;color:#aebbb3;font-size:13px}.signal-chart{position:absolute;left:25px;right:25px;bottom:25px;height:145px;z-index:1;border-bottom:1px solid rgba(255,255,255,.25);display:flex;align-items:flex-end;gap:10px}.bar{flex:1;background:linear-gradient(180deg,var(--lime),rgba(217,255,63,.1));min-height:20px}.bar:nth-child(2n){background:linear-gradient(180deg,#617dff,rgba(22,71,255,.12))}.signal-foot{position:absolute;left:25px;right:25px;bottom:7px;display:flex;justify-content:space-between;color:#91a19a;font-size:10px;z-index:1}.stamp{position:absolute;right:-25px;top:34%;transform:rotate(90deg);font-size:10px;letter-spacing:.2em;color:rgba(255,255,255,.26)}
+    section{padding:94px 0}.section-head{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:28px}.section-index{font-size:12px;color:var(--blue);font-weight:800;letter-spacing:.14em}.section-head h2{font-size:clamp(34px,5vw,66px);line-height:.97;letter-spacing:-.085em;margin:8px 0 0;max-width:680px}.section-head p{max-width:300px;color:var(--muted);font-size:13px;margin:0}.index-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.index-card{min-height:255px;border:1px solid var(--line);padding:21px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .2s,background .2s;position:relative;overflow:hidden}.index-card:hover{transform:translateY(-5px);background:var(--white)}.index-card:before{content:"";position:absolute;right:-25px;top:-25px;width:100px;height:100px;border-radius:50%;background:var(--lime);opacity:.9}.index-card:nth-child(2):before{background:var(--rose)}.index-card:nth-child(3):before{background:var(--blue)}.card-no{font-size:11px;color:var(--muted);position:relative;z-index:1}.index-card h3{font-size:29px;letter-spacing:-.07em;margin:0;position:relative;z-index:1}.index-card p{font-size:13px;color:#57635f;max-width:270px;margin:9px 0 0;position:relative;z-index:1}.card-link{font-size:12px;font-weight:800;color:var(--blue);position:relative;z-index:1}.card-link:after{content:" ↗"}
+    .feature{background:var(--ink);color:var(--white)}.feature .section-index{color:var(--lime)}.feature .section-head p{color:#99aaa1}.feature-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.pick{background:var(--lime);color:var(--ink);min-height:430px;padding:26px;display:flex;flex-direction:column;justify-content:space-between}.pick-label{font-size:11px;font-weight:850;letter-spacing:.15em}.pick h3{font-size:clamp(42px,6vw,78px);line-height:.88;letter-spacing:-.1em;max-width:520px;margin:55px 0 0}.pick p{max-width:380px;margin:18px 0 0;font-size:14px}.pick-bottom{display:flex;justify-content:space-between;align-items:end;padding-top:30px}.pick .button{border-color:var(--ink);background:var(--ink);color:var(--lime)}.audit{border:1px solid rgba(255,255,255,.22);min-height:430px;padding:26px}.audit h3{font-size:22px;letter-spacing:-.05em;margin:56px 0 23px}.audit-row{display:flex;justify-content:space-between;border-top:1px solid rgba(255,255,255,.2);padding:14px 0;font-size:13px;color:#aebcb4}.audit-row b{color:var(--white);font-weight:700}.audit-row b.ok{color:var(--lime)}.audit-note{font-size:11px;line-height:1.55;color:#71817a;margin-top:22px;max-width:280px}
+    .projects{padding-bottom:108px}.project-list{border-top:1px solid var(--line)}.project{display:grid;grid-template-columns:58px 1.3fr 1fr 100px 30px;gap:20px;align-items:center;padding:20px 0;border-bottom:1px solid var(--line);transition:padding .2s,background .2s}.project:hover{padding-inline:13px;background:var(--white)}.project-no,.project-meta{font-size:11px;color:var(--muted)}.project-name{font-size:18px;font-weight:800;letter-spacing:-.04em}.project-desc{font-size:12px;color:#5b6662}.project-score{font-size:14px;color:var(--blue);font-weight:800}.project-arrow{font-size:20px;color:var(--muted)}.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:27px}.filter{border:1px solid var(--line);background:transparent;border-radius:999px;padding:8px 13px;font-size:11px;cursor:pointer}.filter.active,.filter:hover{background:var(--ink);color:var(--white);border-color:var(--ink)}
+    .manifesto{border-top:1px solid var(--line);padding-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:40px}.manifesto blockquote{font-size:clamp(27px,4vw,53px);line-height:.99;letter-spacing:-.085em;margin:0;max-width:620px}.manifesto blockquote em{font-style:normal;color:var(--blue)}.manifesto-copy{font-size:14px;color:#5e6965;max-width:390px}.manifesto-copy p{margin:0 0 16px}.manifesto-copy a{color:var(--blue);font-weight:800}
+    footer{background:var(--ink);color:var(--white);padding:27px 0;font-size:11px;color:#9caaa3}.footer-inner{display:flex;justify-content:space-between;gap:20px}.footer-inner strong{color:var(--lime);font-size:16px;letter-spacing:-.07em}.footer-links{display:flex;gap:18px}.footer-links a:hover{color:var(--lime)}
+    .toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:var(--lime);color:var(--ink);padding:12px 16px;border-radius:999px;font-size:12px;font-weight:800;opacity:0;pointer-events:none;transition:.2s;z-index:10}.toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(max-width:850px){.shell{padding:0 20px}.navlinks a:not(.nav-action){display:none}.hero{grid-template-columns:1fr;min-height:auto;padding:55px 0 70px}.signal{min-height:420px}.signal-title{margin-top:55px}.index-grid,.feature-grid{grid-template-columns:1fr}.index-card{min-height:210px}.section-head{display:block}.section-head p{margin-top:16px}.project{grid-template-columns:35px 1fr 35px}.project-desc,.project-meta{display:none}.manifesto{grid-template-columns:1fr;gap:28px}.footer-inner{display:block}.footer-links{margin-top:16px}.hero-meta{gap:16px}}
+    @media(max-width:520px){h1{font-size:clamp(51px,16vw,78px)}.hero-copy{font-size:17px}.hero-actions{flex-wrap:wrap}.hero-meta{justify-content:space-between}.hero-meta b{font-size:16px}.signal{min-height:390px;padding:18px}.signal-chart{left:18px;right:18px}.stamp{display:none}section{padding:70px 0}.project{gap:11px}.project-name{font-size:15px}.project-score{font-size:12px}.topline span:last-child{display:none}}
+    .labbar{background:var(--ink);color:var(--white);padding:13px 0;border-bottom:1px solid rgba(255,255,255,.15)}.labbar-inner{display:flex;align-items:center;justify-content:space-between;gap:22px}.lab-title{font-size:11px;letter-spacing:.14em;font-weight:800;text-transform:uppercase;white-space:nowrap}.lab-title span{color:var(--lime)}.theme-options{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.theme-option{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid rgba(255,255,255,.28);background:transparent;color:#bdc8c2;cursor:pointer;font-size:11px;border-radius:999px}.theme-option:hover,.theme-option.active{border-color:var(--lime);color:var(--white);background:rgba(255,255,255,.08)}.swatch{width:16px;height:16px;border-radius:50%;display:inline-block;border:1px solid rgba(255,255,255,.35)}.swatch.acid{background:linear-gradient(135deg,#e8ece4 50%,#1647ff 50%)}.swatch.editorial{background:linear-gradient(135deg,#f6f0e8 50%,#c84630 50%)}.swatch.terminal{background:linear-gradient(135deg,#101010 50%,#d9ff3f 50%)}.swatch.orbit{background:linear-gradient(135deg,#10172b 50%,#55e5ff 50%)}.theme-description{font-size:11px;color:#98a8a0;margin:0;white-space:nowrap}
+    .theme-editorial{--paper:#f5f0e7;--paper-2:#ebe1d2;--ink:#241e1a;--muted:#756b61;--line:rgba(36,30,26,.2);--blue:#c84630;--lime:#f2bd38;--rose:#d68a65;--white:#fffaf2;--shadow:0 18px 35px rgba(73,48,31,.13)}body.theme-editorial{font-family:"Iowan Old Style",Georgia,"Times New Roman","Songti SC",serif}.theme-editorial .topline{background:#c84630;color:#fffaf2}.theme-editorial .topline strong{color:#f2bd38}.theme-editorial header{background:rgba(245,240,231,.92)}.theme-editorial .wordmark,.theme-editorial .navlinks,.theme-editorial .nav-action{font-family:Inter,"Helvetica Neue","PingFang SC",sans-serif}.theme-editorial h1,.theme-editorial .section-head h2,.theme-editorial .manifesto blockquote{font-family:"Iowan Old Style",Georgia,"Times New Roman","Songti SC",serif;font-weight:700;letter-spacing:-.08em}.theme-editorial h1 em,.theme-editorial .section-index,.theme-editorial .card-link,.theme-editorial .project-score{color:var(--blue)}.theme-editorial .button,.theme-editorial .index-card,.theme-editorial .project{border-radius:0}.theme-editorial .signal{background:#241e1a;box-shadow:10px 10px 0 rgba(200,70,48,.22)}.theme-editorial .pick{background:#f2bd38}.theme-editorial .index-card:before{border-radius:0;transform:rotate(45deg);width:84px;height:84px}.theme-editorial .feature{background:#241e1a}
+    .theme-terminal{--paper:#101010;--paper-2:#171717;--ink:#f1f0e7;--muted:#a5a69d;--line:rgba(241,240,231,.28);--blue:#ff6435;--lime:#d9ff3f;--rose:#ff4f92;--white:#f1f0e7;--shadow:8px 8px 0 rgba(217,255,63,.45)}body.theme-terminal{font-family:"IBM Plex Mono","SFMono-Regular",Consolas,monospace}.theme-terminal .topline{background:var(--lime);color:#101010}.theme-terminal .topline strong{color:#101010}.theme-terminal header{background:rgba(16,16,16,.95)}.theme-terminal .navlinks,.theme-terminal .nav-action{font-family:inherit}.theme-terminal .nav-action,.theme-terminal .button,.theme-terminal .filter{border-radius:0}.theme-terminal .hero{grid-template-columns:1fr .76fr;align-items:start;padding-top:57px}.theme-terminal h1,.theme-terminal .section-head h2,.theme-terminal .manifesto blockquote{font-family:"Arial Narrow","Roboto Condensed",Impact,sans-serif;text-transform:uppercase;letter-spacing:-.08em}.theme-terminal h1 em{color:var(--lime)}.theme-terminal .signal{border:3px solid var(--lime);box-shadow:var(--shadow)}.theme-terminal .index-card,.theme-terminal .audit,.theme-terminal .project{border-width:2px}.theme-terminal .index-card:before{border-radius:0;background:var(--rose);transform:rotate(12deg)}.theme-terminal .pick{background:var(--lime);border:3px solid var(--ink)}.theme-terminal .feature{background:#050505}.theme-terminal .project:hover{background:#1b1b1b}.theme-terminal .project-score{color:var(--lime)}
+    .theme-orbit{--paper:#0b1324;--paper-2:#121d33;--ink:#edf5ff;--muted:#91a4bd;--line:rgba(159,196,255,.25);--blue:#55e5ff;--lime:#b4ff69;--rose:#b27cff;--white:#edf5ff;--shadow:0 22px 70px rgba(0,0,0,.38)}body.theme-orbit{font-family:Inter,"Helvetica Neue","PingFang SC","Microsoft YaHei",system-ui,sans-serif}.theme-orbit .topline{background:#050a14;color:#9fb1c9}.theme-orbit .topline strong{color:var(--blue)}.theme-orbit header{background:rgba(11,19,36,.84)}.theme-orbit .wordmark i,.theme-orbit h1 em,.theme-orbit .section-index,.theme-orbit .card-link,.theme-orbit .project-score{color:var(--blue)}.theme-orbit .button.primary{background:var(--blue);border-color:var(--blue);color:#07131e}.theme-orbit .button:hover{background:#142541}.theme-orbit .signal{background:linear-gradient(160deg,#162a4c,#090f1f);border:1px solid rgba(85,229,255,.45);box-shadow:0 0 70px rgba(85,229,255,.14)}.theme-orbit .signal:after{background:radial-gradient(circle at 70% 25%,rgba(178,124,255,.35),transparent 33%),linear-gradient(135deg,transparent 48%,rgba(85,229,255,.3) 49%,transparent 50%);background-size:auto,170px 170px}.theme-orbit .signal .bar{background:linear-gradient(180deg,var(--blue),rgba(85,229,255,.05))}.theme-orbit .signal .bar:nth-child(2n){background:linear-gradient(180deg,var(--rose),rgba(178,124,255,.08))}.theme-orbit .index-card{background:rgba(18,29,51,.7);border-color:rgba(159,196,255,.28)}.theme-orbit .index-card:hover{background:#172a48}.theme-orbit .index-card:before{background:var(--rose)}.theme-orbit .index-card:nth-child(2):before{background:var(--lime)}.theme-orbit .index-card:nth-child(3):before{background:var(--blue)}.theme-orbit .feature{background:#050a14}.theme-orbit .pick{background:linear-gradient(145deg,#b4ff69,#55e5ff);color:#07131e}.theme-orbit .audit{border-color:rgba(159,196,255,.3)}.theme-orbit .project:hover{background:#142541}.theme-orbit footer{background:#050a14}
+    @media(max-width:720px){.labbar-inner{display:block}.theme-description{display:none}.theme-options{justify-content:flex-start;margin-top:10px}.theme-option{font-size:10px;padding:6px 8px}.lab-title{font-size:10px}}
+    body.design-lab-mode{background:#111;overflow-x:hidden}body.design-lab-mode>.topline,body.design-lab-mode>header,body.design-lab-mode>main,body.design-lab-mode>footer,body.design-lab-mode>.toast{display:none!important}
+    #style-lab{min-height:100vh;background:#111;color:#f5f7f2;font-family:Inter,"Helvetica Neue","PingFang SC","Microsoft YaHei",system-ui,sans-serif}#style-lab *{box-sizing:border-box}#style-lab .lab-chooser{position:sticky;top:0;z-index:20;background:#111;padding:18px 24px 16px;border-bottom:1px solid #363b38}#style-lab .lab-head{max-width:1380px;margin:0 auto 14px;display:flex;align-items:end;justify-content:space-between;gap:20px}#style-lab .lab-title{font-size:15px;font-weight:850;letter-spacing:-.04em}#style-lab .lab-title span{color:#d9ff3f}#style-lab .lab-subtitle{color:#89948d;font-size:12px;margin:0}#style-lab .lab-options{max-width:1380px;margin:auto;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px}.lab-option{min-height:58px;border:1px solid #3c4540;background:#181c1a;color:#acb7b0;padding:9px 10px;text-align:left;cursor:pointer;font-size:11px;transition:.18s;position:relative}.lab-option:hover,.lab-option.active{border-color:#d9ff3f;color:#fff;background:#242a26}.lab-option.active:after{content:"SELECTED";position:absolute;right:8px;bottom:7px;color:#d9ff3f;font-size:8px;letter-spacing:.1em}.lab-option b{display:block;color:#fff;font-size:12px;margin-top:4px}.lab-option em{display:block;width:100%;height:7px;margin-bottom:8px;font-style:normal}.mini-editorial{background:linear-gradient(90deg,#f2eee5 0 64%,#c84630 64%)}.mini-brutalist{background:linear-gradient(90deg,#f6f34a 0 64%,#101010 64%)}.mini-terminal{background:linear-gradient(90deg,#092117 0 64%,#d2ffc1 64%)}.mini-swiss{background:linear-gradient(90deg,#fff 0 64%,#df251f 64%)}.mini-bento{background:linear-gradient(90deg,#101425 0 64%,#63d7ff 64%)}.mini-museum{background:linear-gradient(90deg,#d9ccb6 0 64%,#1c2d34 64%)}.mini-feed{background:linear-gradient(90deg,#edf0f2 0 64%,#6849d9 64%)}.mini-future{background:linear-gradient(90deg,#090019 0 64%,#55e5ff 64%)}#style-lab .lab-stage{max-width:1380px;margin:0 auto;padding:28px 24px 70px}#style-stage{min-height:760px}#style-stage .v{min-height:760px;width:100%;overflow:hidden}#style-stage h1,#style-stage h2,#style-stage h3,#style-stage p{margin-top:0}#style-stage a{color:inherit;text-decoration:none}#style-stage button{font:inherit}
+    .v-editorial{background:#f2eee5;color:#231f1b;padding:28px 34px;font-family:Georgia,"Times New Roman","Songti SC",serif}.e-mast{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;font-family:Inter,sans-serif;font-size:11px;letter-spacing:.12em;text-transform:uppercase}.e-mast strong{font:800 20px Inter,sans-serif;letter-spacing:-.1em}.e-mast span:last-child{text-align:right}.e-rule{height:1px;background:#231f1b;margin:20px 0 38px}.e-layout{display:grid;grid-template-columns:160px minmax(0,1fr);gap:50px;max-width:1110px;margin:auto}.e-rail{border-right:1px solid rgba(35,31,27,.35);padding-right:23px;font-family:Inter,sans-serif;font-size:11px}.e-rail b{font-size:44px;letter-spacing:-.1em}.e-rail p{margin:15px 0 45px;color:#776c61;line-height:1.5}.e-rail small{display:block;border-top:1px solid rgba(35,31,27,.35);padding-top:11px;margin-top:12px}.e-kicker{font:800 11px Inter,sans-serif;letter-spacing:.15em;color:#c84630}.e-main h1{font-size:clamp(60px,9vw,120px);line-height:.82;letter-spacing:-.095em;margin:25px 0 23px;max-width:820px}.e-main h1 em{font-style:normal;color:#c84630}.e-dek{font-size:21px;line-height:1.2;max-width:510px}.e-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;border-top:1px solid #231f1b;border-bottom:1px solid #231f1b;margin-top:64px}.e-card{padding:18px 14px 22px;min-height:170px;border-right:1px solid #231f1b}.e-card:last-child{border-right:0}.e-card b{font:800 12px Inter,sans-serif;color:#c84630}.e-card h2{font-size:26px;margin:35px 0 8px;letter-spacing:-.05em}.e-card p{font:13px/1.4 Inter,sans-serif;color:#756b61}.e-foot{display:flex;justify-content:space-between;margin-top:22px;font:10px Inter,sans-serif;text-transform:uppercase;color:#756b61}
+    .v-brutalist{background:#f6f34a;color:#0d0d0d;padding:20px;font-family:"Arial Black",Impact,Inter,sans-serif;position:relative}.b-top{display:flex;justify-content:space-between;border-bottom:4px solid #0d0d0d;padding-bottom:11px;font-size:13px}.b-top strong{font-size:29px;letter-spacing:-.1em}.b-top span{font:800 11px/1.2 monospace;text-align:right}.b-layout{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;min-height:620px;padding-top:22px}.b-display{border:4px solid #0d0d0d;background:#0d0d0d;color:#f6f34a;padding:27px 24px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}.b-display:after{content:"";position:absolute;width:340px;height:340px;border:30px solid #ff4f92;border-radius:50%;right:-140px;bottom:-110px}.b-display h1{font-size:clamp(62px,9vw,136px);line-height:.78;letter-spacing:-.1em;margin:0;position:relative;z-index:1}.b-display h1 em{font-style:normal;color:#ff4f92}.b-stamp{position:absolute;top:22px;right:22px;border:3px solid #f6f34a;padding:8px;font:800 11px monospace;transform:rotate(8deg);z-index:1}.b-column{display:grid;grid-template-rows:1fr 1fr;gap:14px}.b-box{border:4px solid #0d0d0d;padding:18px;background:#ff4f92;display:flex;flex-direction:column;justify-content:space-between}.b-box:nth-child(2){background:#0d0d0d;color:#f6f34a}.b-box b{font:800 12px monospace}.b-box h2{font-size:43px;line-height:.85;letter-spacing:-.09em;margin:0}.b-box p{font:700 13px/1.25 monospace;max-width:240px}.b-ticker{position:absolute;bottom:0;left:0;right:0;background:#0d0d0d;color:#f6f34a;padding:10px;font:800 12px monospace;letter-spacing:.08em;white-space:nowrap;overflow:hidden}
+    .v-terminal{background:#092117;color:#d2ffc1;display:grid;grid-template-columns:235px minmax(0,1fr);font-family:"IBM Plex Mono","SFMono-Regular",Consolas,monospace}.t-side{border-right:1px solid rgba(210,255,193,.25);padding:24px 18px;font-size:12px}.t-brand{font-size:18px;color:#d9ff3f;margin-bottom:54px}.t-side p{color:#789b82;margin:10px 0}.t-side .active{color:#d9ff3f}.t-side .active:before{content:"> ";}.t-main{padding:48px 7vw;position:relative}.t-prompt{color:#8db89a;font-size:12px;margin-bottom:57px}.t-main h1{font:500 clamp(60px,8vw,118px)/.86 "IBM Plex Mono",monospace;letter-spacing:-.1em;margin:0 0 35px}.t-main h1 em{font-style:normal;color:#d9ff3f}.t-code{border:1px solid rgba(210,255,193,.25);padding:15px;color:#9ed7aa;font:12px/1.6 monospace;max-width:520px;background:rgba(0,0,0,.15);white-space:pre-wrap}.t-cmd{margin-top:44px;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;border-top:1px solid rgba(210,255,193,.25);border-bottom:1px solid rgba(210,255,193,.25)}.t-cmd div{padding:17px 8px;border-right:1px solid rgba(210,255,193,.25)}.t-cmd div:last-child{border-right:0}.t-cmd b{display:block;color:#d9ff3f;font-size:20px;margin-bottom:5px}.t-cmd span{color:#789b82;font-size:11px}.t-corner{position:absolute;right:30px;top:28px;color:#d9ff3f;font-size:11px}
+    .v-swiss{background:#fff;color:#111;padding:30px;font-family:Arial,Helvetica,sans-serif}.s-nav{display:flex;justify-content:space-between;border-bottom:2px solid #111;padding-bottom:16px;font-size:12px}.s-nav strong{font-size:18px;letter-spacing:-.1em}.s-nav span{word-spacing:18px}.s-grid{display:grid;grid-template-columns:85px 1fr 220px;min-height:500px;border-bottom:2px solid #111}.s-no{padding-top:25px;font-size:13px;border-right:1px solid #111}.s-hero{padding:38px 4vw;border-right:1px solid #111;display:flex;align-items:center}.s-hero h1{font-size:clamp(58px,8vw,118px);line-height:.83;letter-spacing:-.11em;margin:0}.s-hero h1 em{font-style:normal;color:#df251f}.s-side{padding:28px 18px;font-size:12px;display:flex;flex-direction:column;justify-content:space-between}.s-side .cross{font-size:100px;line-height:.6;color:#df251f}.s-side p{line-height:1.4}.s-side b{font-size:22px}.s-table{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0}.s-table div{padding:20px 14px;border-right:1px solid #111;font-size:12px}.s-table div:last-child{border-right:0}.s-table b{display:block;font-size:30px;letter-spacing:-.08em;margin-bottom:7px}.s-table span{font-weight:700}
+    .v-bento{background:#101425;color:#eef3ff;padding:24px;font-family:Inter,"Helvetica Neue",sans-serif}.bt-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;font-size:12px}.bt-head strong{font-size:21px;letter-spacing:-.1em}.bt-head nav{color:#9da9c3;word-spacing:18px}.bt-grid{display:grid;grid-template-columns:1.45fr .55fr .8fr;grid-template-rows:1fr .78fr;gap:12px;min-height:665px}.bt-hero{grid-row:span 2;padding:32px;background:linear-gradient(145deg,#4b5df4,#182157);display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}.bt-hero:after{content:"";width:360px;height:360px;border-radius:50%;border:1px solid rgba(255,255,255,.25);position:absolute;right:-120px;bottom:-90px;box-shadow:0 0 0 28px rgba(255,255,255,.08),0 0 0 57px rgba(255,255,255,.06)}.bt-label{font-size:11px;color:#b5c0ff;letter-spacing:.12em}.bt-hero h1{font-size:clamp(57px,7vw,102px);line-height:.84;letter-spacing:-.11em;margin:0;position:relative;z-index:1}.bt-hero h1 em{font-style:normal;color:#c9ff67}.bt-hero p{max-width:310px;color:#d7ddff;font-size:14px;position:relative;z-index:1}.bt-card{padding:20px;background:#171e38;border:1px solid #2c385f;display:flex;flex-direction:column;justify-content:space-between}.bt-card.lime{background:#c9ff67;color:#101425}.bt-card.cyan{background:#63d7ff;color:#101425}.bt-card h2{font-size:39px;letter-spacing:-.1em;margin:0}.bt-card p{font-size:12px;line-height:1.35;margin:0;color:#a9b5d0}.bt-card.lime p,.bt-card.cyan p{color:#294158}.bt-list{grid-column:span 2;background:#0a0e1c;border:1px solid #2c385f;padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:14px}.bt-list h3{grid-column:span 2;font-size:12px;color:#a9b5d0;margin:0}.bt-item{border-top:1px solid #2c385f;padding-top:12px;font-size:13px}.bt-item b{display:block}.bt-item span{color:#7283a4;font-size:11px}
+    .v-museum{background:#d9ccb6;color:#1c2d34;padding:45px 5vw;font-family:Georgia,"Times New Roman","Songti SC",serif}.m-catalog{display:flex;justify-content:space-between;font:800 11px Inter,sans-serif;letter-spacing:.15em;border-bottom:1px solid #1c2d34;padding-bottom:17px}.m-space{display:grid;grid-template-columns:1fr 1.2fr;min-height:560px;align-items:center;gap:40px}.m-space h1{font-size:clamp(65px,9vw,132px);line-height:.78;letter-spacing:-.1em;margin:16px 0}.m-space h1 em{font-style:normal;color:#a94d34}.m-space p{font:12px/1.5 Inter,sans-serif;max-width:200px}.m-figure{height:390px;position:relative;display:flex;align-items:center;justify-content:center}.m-disc{width:min(33vw,350px);height:min(33vw,350px);border-radius:50%;background:#1c2d34;box-shadow:0 0 0 18px #a94d34,0 0 0 34px #e6ddcf;position:relative}.m-disc:after{content:"MARK";position:absolute;inset:0;display:grid;place-items:center;color:#d9ccb6;font:800 13px Inter,sans-serif;letter-spacing:.2em}.m-caption{position:absolute;right:0;bottom:25px;max-width:170px;font:11px/1.45 Inter,sans-serif;color:#6a5b50}.m-bottom{display:flex;justify-content:space-between;border-top:1px solid #1c2d34;padding-top:14px;font:11px Inter,sans-serif;color:#6a5b50}
+    .v-feed{background:#edf0f2;color:#1e2430;display:grid;grid-template-columns:220px minmax(0,1fr) 250px;min-height:760px;font-family:Inter,"Helvetica Neue",sans-serif}.f-nav{background:#fff;padding:25px 18px;border-right:1px solid #d8dde2}.f-nav strong{font-size:22px;letter-spacing:-.1em}.f-nav a{display:block;margin-top:37px;font-size:13px;color:#67717c}.f-nav a.active{color:#6849d9;font-weight:800}.f-nav small{display:block;color:#a0a8b1;margin-top:80px;line-height:1.5}.f-stream{padding:26px 28px;max-width:700px;width:100%;margin:auto}.f-stream header{position:static;background:transparent;border:0;height:auto;display:flex;justify-content:space-between;padding:0 0 18px;font-size:12px}.f-stream header b{font-size:17px}.f-hero{background:#6849d9;color:#fff;padding:28px;min-height:260px;display:flex;flex-direction:column;justify-content:space-between}.f-hero h1{font-size:clamp(44px,6vw,82px);line-height:.84;letter-spacing:-.1em;margin:0}.f-hero h1 em{font-style:normal;color:#cfff6a}.f-hero p{font-size:13px;max-width:310px;color:#e1dcff}.f-post{background:#fff;margin-top:12px;padding:17px;border:1px solid #d8dde2}.f-post-top{display:flex;justify-content:space-between;font-size:11px;color:#78838e}.f-post h3{font-size:18px;letter-spacing:-.05em;margin:22px 0 7px}.f-post p{font-size:13px;color:#5e6975;margin:0}.f-proof{padding:25px 18px;border-left:1px solid #d8dde2}.f-proof h3{font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin:0 0 25px;color:#6849d9}.f-proof-row{padding:15px 0;border-top:1px solid #d8dde2;font-size:12px}.f-proof-row b{display:block;font-size:20px;margin-bottom:5px}.f-proof-row span{color:#7c8791}
+    .v-future{background:#090019;color:#e6f8ff;padding:32px;position:relative;overflow:hidden;font-family:Inter,"Helvetica Neue",sans-serif}.v-future:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 75% 35%,rgba(178,124,255,.24),transparent 27%),linear-gradient(120deg,transparent 49.8%,rgba(85,229,255,.25) 50%,transparent 50.2%);background-size:auto,90px 90px}.fu-head{position:relative;z-index:1;display:flex;justify-content:space-between;font-size:12px}.fu-head strong{font-size:22px;letter-spacing:-.1em}.fu-head span{color:#8fa2c1}.fu-layout{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;align-items:center;min-height:660px;gap:40px}.fu-copy .fu-kicker{color:#55e5ff;font-size:11px;letter-spacing:.2em}.fu-copy h1{font-size:clamp(60px,8vw,125px);line-height:.8;letter-spacing:-.12em;margin:23px 0}.fu-copy h1 em{font-style:normal;color:#55e5ff}.fu-copy p{max-width:350px;color:#9fb4d4;font-size:14px}.fu-action{display:inline-block;margin-top:25px;padding:12px 18px;border:1px solid #55e5ff;color:#55e5ff;font-size:12px}.fu-orbit{width:min(40vw,470px);height:min(40vw,470px);border-radius:50%;border:1px solid rgba(85,229,255,.8);position:relative;justify-self:center;box-shadow:0 0 80px rgba(85,229,255,.15)}.fu-orbit:before,.fu-orbit:after{content:"";position:absolute;border-radius:50%;inset:11%;border:1px solid rgba(178,124,255,.75);transform:rotate(55deg) scaleX(.48)}.fu-orbit:after{inset:22%;border-color:#b4ff69;transform:rotate(-35deg) scaleX(.42)}.fu-core{position:absolute;inset:40%;border-radius:50%;background:#55e5ff;box-shadow:0 0 45px #55e5ff,0 0 100px rgba(178,124,255,.7)}.fu-node{position:absolute;padding:7px 9px;border:1px solid rgba(180,255,105,.7);color:#b4ff69;font-size:10px;background:#090019}.fu-node.n1{top:18%;left:3%}.fu-node.n2{right:0;top:45%;border-color:#55e5ff;color:#55e5ff}.fu-node.n3{bottom:7%;left:25%;border-color:#b27cff;color:#b27cff}.fu-foot{position:absolute;z-index:1;bottom:25px;left:32px;right:32px;display:flex;justify-content:space-between;color:#7186a8;font-size:10px;letter-spacing:.1em}
+    @media(max-width:980px){#style-lab .lab-options{grid-template-columns:repeat(4,1fr)}.e-layout{grid-template-columns:1fr}.e-rail{border-right:0;border-bottom:1px solid rgba(35,31,27,.35);padding:0 0 16px;display:flex;gap:20px}.e-rail p{margin:0}.b-layout,.fu-layout{grid-template-columns:1fr}.b-layout{min-height:0}.bt-grid{grid-template-columns:1fr 1fr}.bt-hero{grid-row:auto;grid-column:span 2}.bt-list{grid-column:span 2}.v-feed{grid-template-columns:170px minmax(0,1fr)}.f-proof{display:none}.v-museum .m-space{grid-template-columns:1fr 1fr}}
+    @media(max-width:620px){#style-lab .lab-chooser{padding:14px 14px 12px}#style-lab .lab-head{display:block}.lab-subtitle{margin-top:5px}.lab-options{gap:5px!important}.lab-option{min-height:49px;padding:6px;font-size:9px}.lab-option b{font-size:10px}.lab-option.active:after{display:none}#style-lab .lab-stage{padding:14px 10px 40px}#style-stage .v{min-height:680px}.v-editorial,.v-brutalist,.v-museum,.v-future{padding:20px}.e-mast{grid-template-columns:1fr auto}.e-mast span:nth-child(2){display:none}.e-main h1,.b-display h1,.t-main h1,.s-hero h1,.m-space h1,.fu-copy h1{font-size:clamp(47px,15vw,83px)}.e-grid,.s-table,.t-cmd{grid-template-columns:1fr}.e-card,.s-table div,.t-cmd div{border-right:0;border-bottom:1px solid currentColor}.e-card:last-child,.s-table div:last-child,.t-cmd div:last-child{border-bottom:0}.b-layout{display:block}.b-column{margin-top:14px}.b-box{min-height:150px}.v-terminal{display:block}.t-side{border-right:0;border-bottom:1px solid rgba(210,255,193,.25);display:flex;justify-content:space-between;gap:10px;padding:16px}.t-brand{margin:0}.t-side p{display:none}.t-main{padding:40px 22px}.bt-grid{display:block;min-height:0}.bt-hero,.bt-card,.bt-list{min-height:185px;margin-bottom:12px}.bt-list{display:grid}.s-grid{display:block;min-height:0}.s-no{border-right:0;padding-bottom:12px}.s-hero{border-right:0;border-top:1px solid #111;border-bottom:1px solid #111;padding:38px 0}.s-side{min-height:180px;padding:25px 0}.m-space{display:block!important;min-height:0}.m-figure{height:310px;margin-top:25px}.m-disc{width:220px;height:220px}.v-feed{display:block}.f-nav{border-right:0;border-bottom:1px solid #d8dde2;display:flex;justify-content:space-between;align-items:center;padding:17px}.f-nav a,.f-nav small{display:none}.f-stream{padding:14px}.fu-layout{display:flex;flex-direction:column;align-items:flex-start;justify-content:center}.fu-orbit{width:270px;height:270px;align-self:center;order:-1}.fu-foot{left:20px;right:20px}.fu-copy h1{margin:16px 0}.theme-description{display:none}}
+  </style>
 </head>
 <body>
-
-<!-- 品牌头 -->
-<header class="site">
-  <div class="wrap">
-    <a class="brand" href="index.html">
-      <span class="logo">马</span>
-      开源马克斯<span class="tld">osmarks.com</span>
-    </a>
-    <nav class="top">
-      <a href="#tools" class="on">工具榜</a>
-      <a href="#video" class="hot">视频排雷</a>
-      <a href="#abroad">出海四大件</a>
-      <a href="#suggest">工具自荐</a>
-      <a href="#about">关于我</a>
-    </nav>
-  </div>
-</header>
-
-<!-- Hero -->
-<section class="hero">
-  <div class="wrap">
-    <span class="kicker">⚡ 全网首席 AI 踩坑大师 · 已替你踩过 500+ 个坑</span>
-    <h1>AI 工具千千万<br>我先踩坑<span class="grad">你抄近道</span></h1>
-    <p class="sub">我不当导师也不恰饭吹工具。每个工具我自己真金白银测过，哪里卡死人、哪里吹牛皮，直说。能留下来的，才是真帮你省时间的那批。</p>
-    <div class="rules">
-      <div class="rule r1">
-        <div class="rt"><span class="dot"></span>绝对克制</div>
-        <p>只收历史总榜 Top100 和近 7 天热议前 100。名单永远这么短，进了就说明真值得。</p>
-      </div>
-      <div class="rule r2">
-        <div class="rt"><span class="dot"></span>绝对中立</div>
-        <p>前端 MIT 开源，测试排雷永久免费。不接软文，不收充钱上榜，谁给我钱都改不了排名。</p>
-      </div>
-      <div class="rule r3">
-        <div class="rt"><span class="dot"></span>坦荡盈利</div>
-        <p>推荐位明码标价走官方 affiliate，你从链接进去我拿佣金，价格不变。企业定制单独收费。</p>
-      </div>
+  <div id="style-lab"><div class="lab-chooser"><div class="lab-head"><div><div class="lab-title">OSMARKS DESIGN LAB <span>/ 8 distinct directions</span></div><p class="lab-subtitle">点击一个方向，查看完全不同的页面骨架与视觉语言。</p></div><div class="lab-sample">CONCEPT ONLY · SAMPLE CONTENT</div></div><div class="lab-options" role="tablist" aria-label="选择完全不同的网站风格"><button class="lab-option active" data-view="editorial" role="tab" aria-selected="true"><em class="mini-editorial"></em><b>01 EDITORIAL</b>杂志目录</button><button class="lab-option" data-view="brutalist" role="tab" aria-selected="false"><em class="mini-brutalist"></em><b>02 BRUTALIST</b>海报宣言</button><button class="lab-option" data-view="terminal" role="tab" aria-selected="false"><em class="mini-terminal"></em><b>03 TERMINAL</b>命令行工具</button><button class="lab-option" data-view="swiss" role="tab" aria-selected="false"><em class="mini-swiss"></em><b>04 SWISS</b>理性网格</button><button class="lab-option" data-view="bento" role="tab" aria-selected="false"><em class="mini-bento"></em><b>05 BENTO</b>信息控制台</button><button class="lab-option" data-view="museum" role="tab" aria-selected="false"><em class="mini-museum"></em><b>06 MUSEUM</b>档案展陈</button><button class="lab-option" data-view="feed" role="tab" aria-selected="false"><em class="mini-feed"></em><b>07 FEED</b>社区信息流</button><button class="lab-option" data-view="future" role="tab" aria-selected="false"><em class="mini-future"></em><b>08 FUTURE</b>未来界面</button></div></div><div class="lab-stage"><div id="style-stage"></div></div></div>
+  <div class="topline"><div class="shell"><span><strong>OSMARKS / FIELD NOTE 01</strong>　证据先于热度</span><span>设计预览 · SAMPLE DATA</span></div></div>
+  <header><div class="shell nav"><a class="wordmark" href="#top">os<i>marks</i></a><nav class="navlinks"><a href="#index">发现</a><a href="#marks">Marks 精选</a><a href="#method">方法</a><a class="nav-action" href="account.html">加入 / 登录</a></nav></div></header>
+  <main id="top">
+    <div class="shell hero">
+      <div><div class="kicker">Open-source AI index / concept</div><h1>Find the work<br><em>worth marking.</em></h1><p class="hero-copy">发现真正值得留下来的开源 AI 工具。<strong>热度帮助你找到候选，证据决定谁能被标记。</strong></p><div class="hero-actions"><a class="button primary" href="#index">开始探索 <span>↓</span></a><a class="button" href="#method">Marks 怎么产生？ <span>↗</span></a></div><div class="hero-meta"><div><b>1,248</b><span>示例项目索引</span></div><div><b>07 days</b><span>示例热度窗口</span></div><div><b>≤ 05</b><span>概念精选上限</span></div></div></div>
+      <div class="signal-wrap"><div class="signal"><div class="signal-head"><span>Signal study / 2026.09.16</span><span class="live-dot">Sample data</span></div><div class="signal-title">The <em>signal</em><br>is moving.</div><p class="signal-note">最近 7 个完整日的新增星标，帮助你看到注意力正在流向哪里。</p><div class="signal-chart"><i class="bar" style="height:28%"></i><i class="bar" style="height:43%"></i><i class="bar" style="height:37%"></i><i class="bar" style="height:62%"></i><i class="bar" style="height:55%"></i><i class="bar" style="height:78%"></i><i class="bar" style="height:100%"></i></div><div class="signal-foot"><span>09.10</span><span>09.16</span></div><span class="stamp">TRACEABLE / PUBLIC / RECHECKABLE</span></div></div>
     </div>
-  </div>
-</section>
-
-<!-- Tabs + 搜索 -->
-<section class="toolbar" id="tools">
-  <div class="wrap">
-    <div class="tabs" role="tablist">
-      <button class="tab on" data-filter="all" role="tab">全部</button>
-      <button class="tab" data-filter="top100" role="tab">Top100 总榜</button>
-      <button class="tab" data-filter="hot7d" role="tab">7 天热议 🔥</button>
-    </div>
-    <div class="searchbox">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-      <input id="search" type="text" placeholder="搜工具名、用途、坑点，回车即达">
-    </div>
-    <div class="count">收录 <b id="count">0</b> 个</div>
-  </div>
-</section>
-
-<div class="wrap">
-  <div class="demo-note">📋 当前为建站演示数据版，正式榜单随首期全网实测评测上线，标准不变，只收 Top100 与 7 天热议前 100。</div>
-  <div class="grid" id="grid"></div>
-</div>
-
-<!-- 视频排雷 -->
-<section class="video-sec" id="video">
-  <div class="wrap">
-    <h2 class="sec-title">视频排雷 · 画中画陪你边干边看</h2>
-    <p class="sec-sub">口播视频我本人出镜，讲哪工具哪里坑。支持画中画，小窗挂着不耽误你干活。</p>
-    <div class="video-card">
-      <div class="video-shell">
-        <video id="demoVideo" poster="" playsinline preload="metadata"></video>
-        <div class="video-poster" id="poster">
-          <div class="play">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
-          </div>
-          <span style="font-size:13px;color:var(--muted)">首期口播 · TimesFM 时序预测排雷实录 · 制作中</span>
-        </div>
-      </div>
-      <div class="video-meta">
-        <div class="vt">TimesFM 上手实录，这些坑我全踩了</div>
-        <p>Google 家的时序预测模型看着香，真跑起来环境、依赖、参数全是坑。我把报错和补丁一条条写在排雷页里，视频随后跟上。</p>
-        <a href="timesfm.html" class="pnp-btn" style="text-decoration:none">先看图文排雷 →</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 出海四大件 -->
-<section class="abroad" id="abroad">
-  <div class="wrap">
-    <h2 class="sec-title">出海四大件 · 我自用的基建</h2>
-    <p class="sec-sub">做站、跑 AI、收款绕不开的四样。全部走官方 affiliate，你花一样的钱，我拿点佣金，坦坦荡荡。</p>
-    <div class="abroad-grid">
-      <div class="ab">
-        <span class="aff">affiliate</span>
-        <div class="ico">🖥️</div>
-        <h4>海外云服务器</h4>
-        <p>境外节点部署与加速的底座，稳定压倒一切。</p>
-        <span class="soon">实测后上架</span>
-      </div>
-      <div class="ab">
-        <span class="aff">affiliate</span>
-        <div class="ico">🔑</div>
-        <h4>AI API 接入</h4>
-        <p>模型能力即插即用，价格和限流我帮你盯。</p>
-        <span class="soon">实测后上架</span>
-      </div>
-      <div class="ab">
-        <span class="aff">affiliate</span>
-        <div class="ico">🌐</div>
-        <h4>独立域名邮箱</h4>
-        <p>对外业务的可信身份，别再用 QQ 邮箱发 proposal。</p>
-        <span class="soon">实测后上架</span>
-      </div>
-      <div class="ab">
-        <span class="aff">affiliate</span>
-        <div class="ico">💸</div>
-        <h4>跨境收款</h4>
-        <p>钱到不了手都是白干，收款链路先跑通。</p>
-        <span class="soon">实测后上架</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 自荐 -->
-<section class="suggest" id="suggest">
-  <div class="wrap">
-    <div class="suggest-box">
-      <div>
-        <h3>你的工具凭什么上榜？</h3>
-        <p>我是 Upack 创作者存证通道的指定自荐入口。自荐免费，收不收看我实测结果，不看出身不看粉丝数。</p>
-      </div>
-      <button class="suggest-btn" id="openSuggest">提交自荐</button>
-    </div>
-  </div>
-</section>
-
-<!-- 关于 -->
-<section class="video-sec" id="about" style="padding-top:20px">
-  <div class="wrap">
-    <h2 class="sec-title">关于马克斯</h2>
-    <p class="sec-sub" style="max-width:680px">一个被 AI 工具坑了太多回的普通人，干脆把自己踩坑的过程全记下来。拆穿虚假宣传，指出卡死人的地方，只推少数真正测过、稳定好用的。评测排雷全公开免费，只有企业私有化定制收服务费。少废话，直接说事。</p>
-  </div>
-</section>
-
-<!-- Footer -->
-<footer class="site">
-  <div class="wrap">
-    <div class="col">
-      <b>开源马克斯</b>
-      普通人视角的 AI 工具严选<br>
-      <span class="law">© 2026 osmarks.com · 前端 MIT 开源</span>
-    </div>
-    <div class="col">
-      <b>三铁律</b>
-      只收 Top100 与 7 天热议<br>
-      排雷免费 · 不接软文 · 不收充钱上榜
-    </div>
-    <div class="col">
-      <b>盈利方式</b>
-      出海四大件官方 affiliate<br>
-      企业私有化定制 · 收费坦荡
-    </div>
-  </div>
-</footer>
-
-<!-- 自荐弹窗 -->
-<div class="modal-mask" id="suggestModal">
-  <div class="modal">
-    <button class="close" id="closeSuggest">✕</button>
-    <div id="formView">
-      <h3>创作者自荐</h3>
-      <p class="msub">填好这四项，生成自荐文本发给我就行。全免费，也不保证收录。</p>
-      <div class="field">
-        <label>工具名称 *</label>
-        <input id="fName" type="text" placeholder="工具叫什么">
-      </div>
-      <div class="field">
-        <label>工具链接 *</label>
-        <input id="fUrl" type="url" placeholder="https:// 开头">
-      </div>
-      <div class="field">
-        <label>分类</label>
-        <select id="fCat">
-          <option>AI 编程</option><option>AI 写作</option><option>AI 绘图</option>
-          <option>AI 视频</option><option>AI 搜索</option><option>效率工具</option>
-          <option>其他</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>一句话说清它强在哪 *</label>
-        <textarea id="fWhy" placeholder="别喊口号，讲真本事，最好带上你的真实使用场景"></textarea>
-      </div>
-      <button class="submit" id="genText">生成自荐文本</button>
-    </div>
-    <div class="done" id="doneView">
-      <div class="big">✅</div>
-      <p>自荐文本已生成，复制后发到下方邮箱即可。</p>
-      <div class="copytip" id="copyTip"></div>
-      <p style="font-weight:700;color:var(--text)">hi@osmarks.com</p>
-      <button class="copy-btn" id="copyBtn">一键复制</button>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script>
-/* ---- 榜单数据（建站演示版） ---- */
-const TOOLS = [
-  {name:"TimesFM", cat:"AI 数据预测", desc:"Google 开源时序预测模型，零样本直接出预测", verdict:"环境是最大的坑，补丁我写在排雷页了", tags:["开源","免费","本地部署"], rank:91, hot:false, link:"timesfm.html"},
-  {name:"DeepSeek", cat:"AI 编程", desc:"国产模型之光，写代码、讲算法都很顶", verdict:"免费额度香，高峰期排队要有耐心", tags:["免费","中文友好"], rank:1, hot:true, link:"#"},
-  {name:"Claude", cat:"AI 编程", desc:"长文理解与代码质量目前的第一梯队", verdict:"贵是真的贵，但改 bug 的水平也是真行", tags:["付费","编程首选"], rank:2, hot:true, link:"#"},
-  {name:"ChatGPT", cat:"AI 全能", desc:"生态最全的六边形战士，插件和联网都有", verdict:"免费版够日常，4o 之外别乱充钱", tags:["免费版可用"], rank:3, hot:false, link:"#"},
-  {name:"Gemini", cat:"AI 全能", desc:"Google 全家桶联动，长上下文一骑绝尘", verdict:"国内访问是门槛，AIP 方案我视频里讲", tags:["免费额度大"], rank:4, hot:false, link:"#"},
-  {name:"Midjourney", cat:"AI 绘图", desc:"出图审美天花板，商业出图还在用它", verdict:"没有免费午餐，充值前先看我的参数教程", tags:["付费","审美在线"], rank:5, hot:true, link:"#"},
-  {name:"可灵 AI", cat:"AI 视频", desc:"国产视频生成黑马，动作一致性很能打", verdict:"积分烧得快，脚本不写好别乱点生成", tags:["免费额度","中文友好"], rank:6, hot:true, link:"#"},
-  {name:"Perplexity", cat:"AI 搜索", desc:"带引用来源的 AI 搜索，告别一本正经胡说", verdict:"英文搜索强，中文信源偶尔拉胯", tags:["免费版可用"], rank:7, hot:false, link:"#"},
-  {name:"Suno", cat:"AI 音乐", desc:"一句话出完整歌曲，喊麦写歌两不误", verdict:"商用授权要看套餐，白嫖党注意", tags:["免费额度"], rank:8, hot:false, link:"#"},
-  {name:"Notion AI", cat:"效率工具", desc:"笔记加 AI 一体化，知识库管理顺手", verdict:"加钱才香，纯白嫖不如本地笔记", tags:["付费","团队友好"], rank:9, hot:false, link:"#"},
-  {name:"即梦 AI", cat:"AI 绘图", desc:"字节出品，中文理解和人像生成很稳", verdict:"免费额度大方，商用前看清条款", tags:["免费额度","中文友好"], rank:10, hot:true, link:"#"},
-  {name:"Ollama", cat:"本地部署", desc:"一条命令本地跑大模型，数据不出门", verdict:"显存不够全靠量化，低配机先跑小杯", tags:["开源","免费","隐私"], rank:11, hot:false, link:"#"}
-];
-
-/* ---- 渲染 ---- */
-const grid = document.getElementById('grid');
-const countEl = document.getElementById('count');
-let curFilter = 'all';
-let curSearch = '';
-
-function render(){
-  const kw = curSearch.trim().toLowerCase();
-  const list = TOOLS.filter(t=>{
-    if(curFilter==='top100' && !t.rank) return false;
-    if(curFilter==='hot7d' && !t.hot) return false;
-    if(kw){
-      const hay = (t.name+' '+t.cat+' '+t.desc+' '+t.verdict+' '+t.tags.join(' ')).toLowerCase();
-      if(!hay.includes(kw)) return false;
-    }
-    return true;
-  });
-  grid.innerHTML = list.length ? list.map(t=>`
-    <article class="tool">
-      ${t.hot?'<span class="badge7">7天热议</span>':''}
-      <div class="row1">
-        <h3><a href="${t.link}">${t.name}</a></h3>
-        <span class="rank">#${t.rank}</span>
-      </div>
-      <div class="cat">${t.cat}</div>
-      <div class="desc">${t.desc}</div>
-      <div class="verdict">⚡ ${t.verdict}</div>
-      <div class="tags">${t.tags.map(x=>`<span class="tag ${x==='免费'||x.includes('免费')?'free':''}">${x}</span>`).join('')}</div>
-    </article>
-  `).join('') : `<div class="empty">没搜到。这词要么不在榜，要么坑太大我还没写完 😅</div>`;
-  countEl.textContent = list.length;
-}
-render();
-
-/* ---- Tabs ---- */
-document.querySelectorAll('.tab').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
-    btn.classList.add('on');
-    curFilter = btn.dataset.filter;
-    render();
-  });
-});
-
-/* ---- 搜索 ---- */
-document.getElementById('search').addEventListener('input',e=>{
-  curSearch = e.target.value;
-  render();
-});
-
-/* ---- 视频画中画 ---- */
-const video = document.getElementById('demoVideo');
-const poster = document.getElementById('poster');
-poster.addEventListener('click',()=>{
-  toast('首期口播正在录制，先看图文排雷更过瘾');
-});
-if(!document.pictureInPictureEnabled || !video.requestPictureInPicture){
-  // 不支持的环境直接禁用按钮，避免点了没反应
-}
-
-/* ---- 自荐弹窗 ---- */
-const modal = document.getElementById('suggestModal');
-document.getElementById('openSuggest').onclick = ()=>{ modal.classList.add('open'); };
-document.getElementById('closeSuggest').onclick = ()=>{ modal.classList.remove('open'); };
-modal.addEventListener('click',e=>{ if(e.target===modal) modal.classList.remove('open'); });
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') modal.classList.remove('open'); });
-
-let generated = '';
-document.getElementById('genText').onclick = ()=>{
-  const n = document.getElementById('fName').value.trim();
-  const u = document.getElementById('fUrl').value.trim();
-  const c = document.getElementById('fCat').value;
-  const w = document.getElementById('fWhy').value.trim();
-  if(!n || !u || !w){ toast('名称、链接和理由是必填的'); return; }
-  generated = `【工具自荐】${n}\n链接 ${u}\n分类 ${c}\n推荐理由 ${w}\n来自 osmarks.com 自荐通道`;
-  document.getElementById('copyTip').textContent = generated;
-  document.getElementById('copyTip').style.display = 'block';
-  document.getElementById('formView').style.display = 'none';
-  document.getElementById('doneView').style.display = 'block';
-};
-document.getElementById('copyBtn').onclick = async ()=>{
-  try{
-    await navigator.clipboard.writeText(generated);
-    toast('已复制，发到 hi@osmarks.com 就行');
-  }catch(e){
-    const ta = document.createElement('textarea');
-    ta.value = generated; document.body.appendChild(ta);
-    ta.select(); document.execCommand('copy'); ta.remove();
-    toast('已复制，发到 hi@osmarks.com 就行');
-  }
-};
-
-/* ---- toast ---- */
-let toastTimer;
-function toast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
-}
-</script>
+    <section id="index"><div class="shell"><div class="section-head"><div><div class="section-index">01 / THE INDEX</div><h2>三种方式，<br>找到下一件值得看的事。</h2></div><p>从正在上升的项目，到经过解释和复核的 Marks 精选，每个入口都告诉你它为什么出现在这里。</p></div><div class="index-grid"><a class="index-card" href="#projects"><div><span class="card-no">01　MOMENTUM</span><h3>上升榜</h3><p>看最近 7 天关注度变化，发现还没有被所有人看见的项目。</p></div><span class="card-link">查看近期信号</span></a><a class="index-card" href="#projects"><div><span class="card-no">02　MOST STARRED</span><h3>星标榜</h3><p>按累计星标浏览开源 AI 工具，保留原项目入口与使用条件。</p></div><span class="card-link">浏览完整榜单</span></a><a class="index-card" href="#marks"><div><span class="card-no">03　MARKS SELECTED</span><h3>Marks 精选</h3><p>通过准入、评分和证据复核后，才进入这个独立的编辑入口。</p></div><span class="card-link">理解精选标准</span></a></div></div></section>
+    <section class="feature" id="marks"><div class="shell"><div class="section-head"><div><div class="section-index">02 / MARKS SELECTED</div><h2>一个荣誉，<br>一条证据链。</h2></div><p>Marks 是可解释的编辑精选，不代表安全认证，也不接受购买上榜资格。</p></div><div class="feature-grid"><article class="pick"><div><div class="pick-label">MARK 0001 / SAMPLE ENTRY</div><h3>把好用的<br>工具留下来。</h3><p>精选页面展示项目原链接、许可证状态、用途、复核日期与评分理由，让一个标记可以被重新检查。</p></div><div class="pick-bottom"><span>Candidate → Selected</span><button class="button" data-toast="精选详情页将在下一版开放">查看档案 ↗</button></div></article><article class="audit"><div class="pick-label">REVIEW TRACE</div><h3>为什么它在这里？</h3><div class="audit-row"><span>源码可访问</span><b class="ok">PASS</b></div><div class="audit-row"><span>用途可说明</span><b class="ok">PASS</b></div><div class="audit-row"><span>可复现性</span><b>22 / 25</b></div><div class="audit-row"><span>维护与文档</span><b>18 / 20</b></div><div class="audit-row"><span>利益关系披露</span><b class="ok">CLEAR</b></div><p class="audit-note">评分只是编辑依据。每周最多 5 个通过实测的精选项目，数量不足时保留空位。</p></article></div></div></section>
+    <section class="projects" id="projects"><div class="shell"><div class="section-head"><div><div class="section-index">03 / TODAY'S INDEX</div><h2>今天的<br>注意力地图。</h2></div><p>这一段只用于观察列表密度、筛选和信息层级。项目名称与指标均为设计样例。</p></div><div class="filters"><button class="filter active" data-filter="all">全部</button><button class="filter" data-filter="rising">上升中</button><button class="filter" data-filter="content">内容创作</button><button class="filter" data-filter="agent">自动化 / Agent</button></div><div class="project-list"><a class="project" data-category="rising" href="#" data-toast="设计预览：项目详情页待补充"><span class="project-no">01</span><span class="project-name">Open WebUI</span><span class="project-desc">本地模型交互与工作台</span><span class="project-score">↑ 84%</span><span class="project-arrow">↗</span></a><a class="project" data-category="agent" href="#" data-toast="设计预览：项目详情页待补充"><span class="project-no">02</span><span class="project-name">Browser Use</span><span class="project-desc">让智能体使用浏览器完成任务</span><span class="project-score">↑ 63%</span><span class="project-arrow">↗</span></a><a class="project" data-category="content" href="#" data-toast="设计预览：项目详情页待补充"><span class="project-no">03</span><span class="project-name">ComfyUI</span><span class="project-desc">节点式图像生成工作流</span><span class="project-score">↑ 47%</span><span class="project-arrow">↗</span></a><a class="project" data-category="rising" href="#" data-toast="设计预览：项目详情页待补充"><span class="project-no">04</span><span class="project-name">Continue</span><span class="project-desc">开源代码助手与 IDE 工作流</span><span class="project-score">↑ 39%</span><span class="project-arrow">↗</span></a></div></div></section>
+    <section id="method"><div class="shell manifesto"><blockquote>Good discovery is a <em>public trail</em>, not a black box.</blockquote><div class="manifesto-copy"><p>osmarks 把发现和荣誉拆开：榜单回答“大家正在看什么”，Marks 回答“为什么值得留下”。</p><p>每个精选条目都应该有来源、日期、理由、核验路径和更正入口。</p><a href="#marks">阅读 Marks 规则 ↗</a></div></div></section>
+  </main>
+  <footer><div class="shell footer-inner"><strong>osmarks</strong><span>Open-source AI, with a trail you can follow.</span><nav class="footer-links"><a href="#index">发现</a><a href="#marks">精选</a><a href="#method">方法</a><a href="#top">回到顶部 ↑</a></nav></div></footer>
+  <div class="toast" id="toast" role="status"></div>
+  <script>
+    const toast=document.getElementById('toast');let toastTimer;
+    function showToast(message){toast.textContent=message;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2400)}
+    const styleViews={
+      editorial:'<div class="v-editorial"><div class="e-mast"><strong>osmarks</strong><span>THE OPEN-SOURCE AI INDEX</span><span>VOL. 01 / 2026</span></div><div class="e-rule"></div><div class="e-layout"><aside class="e-rail"><b>01</b><p>选出值得留下的工具，给每一个判断一条公开路径。</p><small>INDEX</small><small>MARKS</small><small>NOTES</small></aside><article class="e-main"><div class="e-kicker">THE EDITORIAL INDEX / DESIGN STUDY</div><h1>What deserves<br><em>a mark?</em></h1><p class="e-dek">把开源 AI 做成一本可以翻阅、引用和复核的目录。</p><div class="e-grid"><div class="e-card"><b>01</b><h2>Rising</h2><p>看注意力正在流向哪里。</p></div><div class="e-card"><b>02</b><h2>Selected</h2><p>看为什么它值得被留下。</p></div><div class="e-card"><b>03</b><h2>Trace</h2><p>看每个结论来自哪里。</p></div></div><div class="e-foot"><span>sample content / layout study</span><span>scroll to read →</span></div></article></div></div>',
+      brutalist:'<div class="v-brutalist"><div class="b-top"><strong>OSMARKS!!!</strong><span>NO. 01<br>DESIGN STUDY</span></div><div class="b-layout"><div class="b-display"><span class="b-stamp">HEAT ≠ PROOF</span><h1>OPEN<br>SOURCE<br><em>DESERVES<br>ATTENTION_</em></h1></div><div class="b-column"><div class="b-box"><b>01 / FIND</b><h2>LOOK<br>LOUDER.</h2><p>把发现做成一张有冲击力的海报。</p></div><div class="b-box"><b>02 / MARK</b><h2>SHOW<br>THE RECEIPT.</h2><p>每个标记都带着一条证据路径。</p></div></div></div><div class="b-ticker">PUBLIC INDEX　///　OPEN SOURCE　///　SAMPLE CONTENT　///　PUBLIC INDEX　///</div></div>',
+      terminal:'<div class="v-terminal"><aside class="t-side"><div class="t-brand">osmarks.sh</div><p class="active">index</p><p>rising</p><p>selected</p><p>trace</p><p>settings</p><small>LOCAL DESIGN STUDY<br>NO LIVE DATA</small></aside><main class="t-main"><div class="t-corner">v0.8 / concept</div><div class="t-prompt">osmarks@local:~$ ./scan --explain</div><h1>find /<br><em>what lasts.</em></h1><pre class="t-code">[signal]  attention is moving<br>[proof]    every mark has a source<br>[status]   ready for human review<br>[mode]     sample content only</pre><div class="t-cmd"><div><b>01</b><span>DISCOVER</span></div><div><b>02</b><span>REVIEW</span></div><div><b>03</b><span>MARK</span></div></div></main></div>',
+      swiss:'<div class="v-swiss"><div class="s-nav"><strong>O/SMARKS</strong><span>INDEX　MARKS　METHOD　ABOUT</span></div><div class="s-grid"><div class="s-no">01<br>OF<br>08</div><div class="s-hero"><h1>Open source<br>as a public<br><em>standard.</em></h1></div><div class="s-side"><div class="cross">+</div><p>一个清晰的目录，连接热度、用途和可复核的判断。</p><div><b>24 / 7</b><br>attention map</div></div></div><div class="s-table"><div><b>01</b><span>DISCOVER</span></div><div><b>02</b><span>COMPARE</span></div><div><b>03</b><span>VERIFY</span></div></div></div>',
+      bento:'<div class="v-bento"><div class="bt-head"><strong>osmarks</strong><nav>DISCOVER　MARKS　METHOD</nav><span>DESIGN MODE</span></div><div class="bt-grid"><section class="bt-hero"><span class="bt-label">OPEN-SOURCE AI / CONTROL ROOM</span><h1>Find the work<br><em>worth marking.</em></h1><p>把项目、热度和评审证据放进一个可浏览的工作台。</p></section><section class="bt-card lime"><span class="bt-label">SIGNAL</span><h2>↑ 84%</h2><p>sample momentum</p></section><section class="bt-card cyan"><span class="bt-label">MARKS</span><h2>05</h2><p>weekly selection cap</p></section><section class="bt-list"><h3>RECENTLY IN VIEW</h3><div class="bt-item"><b>Project / A</b><span>rising · sample</span></div><div class="bt-item"><b>Project / B</b><span>selected · sample</span></div><div class="bt-item"><b>Project / C</b><span>trace · sample</span></div><div class="bt-item"><b>Project / D</b><span>new · sample</span></div></section></div></div>',
+      museum:'<div class="v-museum"><div class="m-catalog"><span>OSMARKS</span><span>CATALOGUE 01 / DESIGN STUDY</span></div><div class="m-space"><div><p>AN INDEX OF OPEN-SOURCE AI</p><h1>Tools<br><em>worth<br>keeping.</em></h1><p>安静、克制、像一间档案室。每个项目只留下必要的信息。</p></div><div class="m-figure"><div class="m-disc"></div><div class="m-caption">FIG. 01<br>Signal / Proof / Mark<br><br>Sample form, no live records.</div></div></div><div class="m-bottom"><span>ROOM 01 / DISCOVERY</span><span>ENTER THE ARCHIVE →</span></div></div>',
+      feed:'<div class="v-feed"><aside class="f-nav"><strong>osmarks</strong><a class="active" href="#style-stage">首页</a><a href="#style-stage">上升</a><a href="#style-stage">精选</a><a href="#style-stage">我的</a><small>发现项目<br>加入讨论<br>提交更正</small></aside><main class="f-stream"><header><b>Home</b><span>sample content</span></header><article class="f-hero"><span>MARKS / DAILY FEED</span><h1>Good work<br>should travel.</h1><p>一个以社区动态为首屏的 osmarks：先看人在构建什么，再看为什么值得信任。</p></article><article class="f-post"><div class="f-post-top"><span>OPEN SOURCE / 2h</span><span>↗</span></div><h3>一个项目如何从热度走到精选？</h3><p>先进入发现，再通过来源、用途和复核路径留下记录。</p></article><article class="f-post"><div class="f-post-top"><span>MARKS / SAMPLE</span><span>♡</span></div><h3>今天值得打开的三个项目</h3><p>使用场景、安装证据、维护状态和作者信息都在同一张卡片里。</p></article></main><aside class="f-proof"><h3>PROOF RAIL</h3><div class="f-proof-row"><b>01</b><span>来源可访问</span></div><div class="f-proof-row"><b>02</b><span>用途可说明</span></div><div class="f-proof-row"><b>03</b><span>复核可追溯</span></div></aside></div>',
+      future:'<div class="v-future"><div class="fu-head"><strong>osmarks</strong><span>PUBLIC SIGNAL NETWORK　/　DESIGN STUDY</span></div><div class="fu-layout"><div class="fu-copy"><span class="fu-kicker">OPEN-SOURCE AI / 2030</span><h1>Mark the<br><em>signal.</em></h1><p>未来感的入口：项目不是列表，而是围绕证据运行的开放信号网络。</p><a class="fu-action" href="#style-stage">ENTER THE INDEX ↗</a></div><div class="fu-orbit"><i class="fu-core"></i><i class="fu-node n1">DISCOVER</i><i class="fu-node n2">VERIFY</i><i class="fu-node n3">SHARE</i></div></div><div class="fu-foot"><span>SAMPLE DATA / NO LIVE CONNECTION</span><span>TRACEABLE / PUBLIC / RECHECKABLE</span></div></div>'
+    };
+    const viewMeta={editorial:'01 Editorial · 杂志目录',brutalist:'02 Brutalist · 海报宣言',terminal:'03 Terminal · 命令行工具',swiss:'04 Swiss · 理性网格',bento:'05 Bento · 信息控制台',museum:'06 Museum · 档案展陈',feed:'07 Feed · 社区信息流',future:'08 Future · 未来界面'};
+    const stage=document.getElementById('style-stage'),viewButtons=[...document.querySelectorAll('.lab-option')],viewSubtitle=document.querySelector('.lab-subtitle');
+    function renderView(view){const key=viewViewsSafe(view)?view:'editorial';stage.innerHTML=styleViews[key];document.body.classList.add('design-lab-mode');viewButtons.forEach(btn=>{const active=btn.dataset.view===key;btn.classList.toggle('active',active);btn.setAttribute('aria-selected',String(active))});viewSubtitle.textContent='当前：'+viewMeta[key]+' · 仅用于看设计';try{localStorage.setItem('osmarks.designView',key)}catch(_){}}
+    function viewViewsSafe(view){return Object.prototype.hasOwnProperty.call(styleViews,view)}
+    let savedView='editorial';try{savedView=localStorage.getItem('osmarks.designView')||'editorial'}catch(_){}viewButtons.forEach(btn=>btn.addEventListener('click',()=>renderView(btn.dataset.view)));renderView(savedView);
+    document.querySelectorAll('[data-toast]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();showToast(el.dataset.toast)}));
+    document.querySelectorAll('.filter').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.filter').forEach(b=>b.classList.remove('active'));btn.classList.add('active');const filter=btn.dataset.filter;document.querySelectorAll('.project').forEach(row=>row.hidden=filter!=='all'&&row.dataset.category!==filter)}));
+  </script>
 </body>
 </html>
