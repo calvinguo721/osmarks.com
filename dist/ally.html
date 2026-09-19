@@ -1,0 +1,111 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>开你自己的分站｜*.osmarks.com 分站联盟与分润规则｜osmarks</title>
+<meta name="description" content="领一个你的名字.osmarks.com 分站，内容自动同步，朋友通过你的站办理，分润按 70% / 20–30% 公开比例记在你名下。">
+<link rel="canonical" href="https://osmarks.com/ally.html">
+<meta name="theme-color" content="#040b18">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="开源马克斯 osmarks.com">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:title" content="开你自己的分站｜*.osmarks.com 分站联盟与分润规则｜osmarks">
+<meta property="og:description" content="领一个你的名字.osmarks.com 分站，内容自动同步，朋友通过你的站办理，分润按 70% / 20–30% 公开比例记在你名下。">
+<meta property="og:url" content="https://osmarks.com/ally.html">
+<meta property="og:image" content="https://osmarks.com/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="开你自己的分站｜*.osmarks.com 分站联盟与分润规则｜osmarks">
+<meta name="twitter:description" content="领一个你的名字.osmarks.com 分站，内容自动同步，朋友通过你的站办理，分润按 70% / 20–30% 公开比例记在你名下。">
+<meta name="twitter:image" content="https://osmarks.com/og-cover.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/osmarks.css">
+
+</head><body><header class="nav"><div class="wrap nav-inner">
+<a class="brand" href="index.html">os<b>marks</b></a>
+<form class="nav-search" id="navSearchForm" role="search"><input type="search" name="q" placeholder="搜 100 个项目，比如 ollama" aria-label="搜索项目"></form>
+<nav class="nav-links" aria-label="站点导航">
+<a href="rankings.html">榜单</a>
+<a href="search.html">搜索</a>
+<a href="infra.html">出海基建</a>
+<a href="ally.html" aria-current="page">分站联盟</a>
+<a href="about.html">关于</a>
+<button type="button" id="themeToggle">暗色</button>
+<button type="button" id="langToggle">EN</button>
+</nav></div></header><main class="wrap">
+<div class="crumb"><a href="index.html">首页</a><span>/</span>分站联盟</div>
+<section class="block" style="border-top:0;padding-top:26px">
+  <span class="kicker">AMBER · 专属分站</span>
+  <h1 class="h2" style="font-size:clamp(28px,4.4vw,44px)">领一个 <span class="mark-word">你的名字.osmarks.com</span></h1>
+  <p class="sub">你照着排雷指南跑通了第一步，你就是最真诚的推荐人。把这份指南发到群里、朋友圈、知乎贴吧。朋友通过你的站办了卡买了机器，分润记在你名下，系统自动结算。你不用垫钱，不用开公司。</p>
+  <div class="allyrow">
+    <input id="allyName" type="text" inputmode="latin" placeholder="给自己起个名字，比如 laowang" aria-label="分站名字">
+    <span class="allysuffix">.osmarks.com</span>
+    <a class="tool-btn primary" id="allyGo" href="#apply">申领这个分站</a>
+  </div>
+  <p class="allypreview" id="allyPreview">输入后这里会显示你的分站地址</p>
+</section>
+
+<section class="block">
+  <span class="kicker">HOW IT SPLITS</span>
+  <h2 class="h2">分润规则，公开写在这里</h2>
+  <div class="rule4" style="margin-top:20px">
+    <div><b>70%</b><span>赞助与打赏分润。朋友在你站上打赏作者，你拿七成。</span></div>
+    <div><b>20–30%</b><span>出海基建分销与企业定制佣金，按类别定，比例公开写在每张卡片上。</span></div>
+    <div><b>0 元</b><span>申领、开站、内容同步、样式切换，全部免费。没有加盟费，没有保底任务。</span></div>
+    <div><b>按月</b><span>统一走官方收银结算，账目可查。不设二级收银台，钱不到你手上我们不抽。</span></div>
+  </div>
+</section>
+
+<section class="block">
+  <span class="kicker">HOW IT WORKS</span>
+  <h2 class="h2">四步开站</h2>
+  <ol style="color:var(--muted);font-size:14.5px;line-height:2;margin-top:16px;padding-left:22px">
+    <li>在上面填上你想要的二级域名，点申领。</li>
+    <li>我们把分站开出来，样式你挑：暗色，或者极简白。</li>
+    <li>内容自动跟主库同步。要改内容走 GitHub 提 PR，保证不夹带私货。</li>
+    <li>把链接发出去。有人通过你的站办理，系统按 ref 参数记你名下，按月结算。</li>
+  </ol>
+  <div class="grid g2" style="margin-top:20px">
+    <div class="card"><h3>技术上怎么做到</h3><p>泛解析 + Worker 接管：任何 <code>*.osmarks.com</code> 请求先过一层路由，读出子域名和 <code>?ref=</code> 参数，再回源到同一份静态内容。分站不需要单独部署，内容永远和主站一致。</p></div>
+    <div class="card"><h3>我们不做什么</h3><p>不做二级收银台，不允许改价格，不允许往内容里夹带私货，不允许对同一批用户重复计算分润。发现一次，分站收回。</p></div>
+  </div>
+</section>
+
+<section class="block">
+  <span class="kicker">WHO EARNS</span>
+  <h2 class="h2">分润资格与捐助</h2>
+  <div class="grid g2" style="margin-top:20px">
+    <div class="card"><h3>提现资格怎么解锁</h3><p>发一条核实通过的实测视频，或者通过你的分站带来 <b>5 个注册</b>——二选一，即解锁提成资格。注册需邮箱确认、人工复核，防刷机制对所有人一视同仁，包括我们自己。</p></div>
+    <div class="card"><h3>捐助也是可分配收入</h3><p>网站接受捐助，捐助的净收入进入<b>同一个分配池</b>，跟分润同账公示、同一套规则结算。分主推来的流量产生的捐助，按归属记名。捐助渠道开通中，上线即在账目页亮出每一笔。</p></div>
+  </div>
+</section>
+
+<section class="block">
+  <span class="kicker">AMMO</span>
+  <h2 class="h2">分发弹药库，拿去就用</h2>
+  <div class="grid g2" style="margin-top:20px">
+    <div class="card"><h3>专属分享卡</h3><p>填上你的分站名和分主编号，一秒生成带你域名、你编号、直达二维码的精美分享图。竖版发朋友圈，横版做封面，下载即用。</p><p style="margin-top:10px"><a class="btn primary" href="ally/share-card.html">去做分享卡</a></p></div>
+    <div class="card"><h3>推广视频生成器</h3><p>输入分站名，浏览器当场渲染一条 12 秒竖版宣传片：极光动效、你的专属域名和二维码压轴。不用剪辑软件，生成完直接下载发抖音视频号。</p><p style="margin-top:10px"><a class="btn primary" href="ally/promo-video.html">去生成视频</a></p></div>
+  </div>
+</section>
+
+<section class="block" id="apply">
+  <span class="kicker">APPLY</span>
+  <h2 class="h2">申领</h2>
+  <p class="sub">现在是人工开通阶段。把你想用的名字和一句话介绍发到下面的邮箱，24 小时内开通。</p>
+  <div class="btn-row">
+    <a class="btn primary" href="mailto:marks@osmarks.com?subject=%E7%94%B3%E9%A2%86%E5%88%86%E7%AB%99&amp;body=%E6%88%91%E6%83%B3%E7%94%A8%E7%9A%84%E4%BA%8C%E7%BA%A7%E5%9F%9F%E5%90%8D%EF%BC%9A%0A%E6%88%91%E7%9A%84%E4%B8%80%E5%8F%A5%E8%AF%9D%E4%BB%8B%E7%BB%8D%EF%BC%9A%0A%E6%88%91%E6%89%93%E7%AE%97%E5%8F%91%E5%88%B0%E5%93%AA%E9%87%8C%EF%BC%9A%0A">发邮件申领</a>
+    <a class="btn" href="about.html#rules">先看规则</a>
+  </div>
+  <p class="notice" style="margin-top:18px">分润账目页（公示每一笔结算）正在建设中，上线后地址为 <code>osmarks.com/ally/ledger</code>。在它上线之前，所有分润一律人工对账并逐笔邮件确认——先保证账没错，再谈自动化。</p>
+</section>
+</main><footer class="footer"><div class="wrap footer" style="border:0;padding:0">
+<span>数据来源：<a href="https://github.com" target="_blank" rel="noreferrer">GitHub 公开 API</a> · 命令与环境条件逐条来自各项目官方 README</span>
+<span><a href="about.html">关于与规则</a> · <a href="ally.html">分站联盟</a> · <a href="mailto:marks@osmarks.com">marks@osmarks.com</a> · <a href="https://t.me/osmarks" target="_blank" rel="noreferrer">@osmarks</a></span>
+</div></footer><script src="data/tools-v1.js"></script>
+<script src="data/tools-rich.js"></script>
+<script src="data/craft.js"></script>
+<script src="assets/osmarks.js"></script>
+</body></html>

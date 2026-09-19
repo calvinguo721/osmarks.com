@@ -1,0 +1,543 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimesFM 排雷实录 · 环境参数数据三大坑全记录 · 开源马克斯</title>
+<meta name="description" content="Google TimesFM 时序预测模型上手排雷实录。安装版本混乱、JAX 装成 CPU 版、预测长度报错、输入格式不对，这四个坑的报错信息和补丁全部公开，照抄就能跑通。">
+<meta name="keywords" content="TimesFM,时序预测,Google开源模型,JAX报错,TimesFM安装,时间序列预测,TimesFM排雷">
+<meta property="og:title" content="TimesFM 排雷实录 · 三大坑全记录">
+<meta property="og:description" content="Google 家的时序预测模型看着香，真跑起来环境、依赖、参数全是坑。报错信息和补丁一条条写清楚，照抄就能跑通。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://osmarks.com/timesfm.html">
+<meta property="og:site_name" content="开源马克斯">
+<link rel="canonical" href="https://osmarks.com/timesfm.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23ff5c33'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='%23fff' font-family='sans-serif' font-weight='bold'%3EM%3C/text%3E%3C/svg%3E">
+
+<!-- ============ GEO 结构化数据（Schema.org JSON-LD） ============ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://osmarks.com/#website",
+      "url": "https://osmarks.com/",
+      "name": "开源马克斯",
+      "alternateName": "osmarks.com",
+      "description": "普通人视角的 AI 工具严选与避坑排雷站",
+      "inLanguage": "zh-CN",
+      "publisher": { "@id": "https://osmarks.com/#org" }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://osmarks.com/#org",
+      "name": "开源马克斯",
+      "url": "https://osmarks.com/",
+      "email": "hi@osmarks.com",
+      "slogan": "AI 工具千千万，我先踩坑你抄近道"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://osmarks.com/timesfm.html#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://osmarks.com/" },
+        { "@type": "ListItem", "position": 2, "name": "排雷实录", "item": "https://osmarks.com/#tools" },
+        { "@type": "ListItem", "position": 3, "name": "TimesFM 排雷实录" }
+      ]
+    },
+    {
+      "@type": "TechArticle",
+      "@id": "https://osmarks.com/timesfm.html#article",
+      "isPartOf": { "@id": "https://osmarks.com/#website" },
+      "headline": "TimesFM 排雷实录 · 环境、参数、数据三大坑全记录",
+      "description": "Google TimesFM 时序预测模型上手排雷实录，覆盖安装版本混乱、JAX 装成 CPU 版、预测长度报错、输入数据格式错误四大坑的报错信息与修复补丁。",
+      "inLanguage": "zh-CN",
+      "datePublished": "2026-09-19",
+      "dateModified": "2026-09-19",
+      "author": { "@id": "https://osmarks.com/#org" },
+      "publisher": { "@id": "https://osmarks.com/#org" },
+      "mainEntityOfPage": "https://osmarks.com/timesfm.html",
+      "about": { "@id": "https://osmarks.com/timesfm.html#timesfm-app" },
+      "proficiencyLevel": "Beginner",
+      "keywords": "TimesFM, 时序预测, JAX, Google开源模型, 排雷"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://osmarks.com/timesfm.html#timesfm-app",
+      "name": "TimesFM",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Linux, Windows (WSL2), macOS",
+      "softwareVersion": "2.x",
+      "author": { "@type": "Organization", "name": "Google Research" },
+      "url": "https://github.com/google-research/timesfm",
+      "license": "https://opensource.org/licenses/Apache-2.0",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "description": "Google Research 开源的时序预测基础模型，支持零样本预测，基于 JAX 与 PyTorch 实现。"
+    },
+    {
+      "@type": "HowTo",
+      "@id": "https://osmarks.com/timesfm.html#howto",
+      "name": "TimesFM 报错排雷四步修复流程",
+      "description": "TimesFM 跑不通时的标准排雷顺序，按出现频率从高到低排列。",
+      "totalTime": "PT30M",
+      "step": [
+        { "@type": "HowToStep", "position": 1, "name": "锁版本安装", "text": "先固定 timesfm 与 jax 的版本组合再安装，避免最新版 API 不匹配。", "url": "https://osmarks.com/timesfm.html#pit1" },
+        { "@type": "HowToStep", "position": 2, "name": "确认 JAX 后端", "text": "检查 jax 是否装成 CPU 版，GPU 版需要匹配 CUDA 与 jax[cuda] 源。", "url": "https://osmarks.com/timesfm.html#pit2" },
+        { "@type": "HowToStep", "position": 3, "name": "对齐预测参数", "text": "prediction length 与模型 output patch len 对齐，避免截断报错。", "url": "https://osmarks.com/timesfm.html#pit3" },
+        { "@type": "HowToStep", "position": 4, "name": "修数据格式", "text": "输入改为模型要求的列名与频率枚举，numpy 数组要配合 freq 参数。", "url": "https://osmarks.com/timesfm.html#pit4" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://osmarks.com/timesfm.html#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "TimesFM 是什么？",
+          "acceptedAnswer": { "@type": "Answer", "text": "TimesFM 是 Google Research 开源的时序预测基础模型。它把时间序列切成 patch 做预训练，拿到一条历史序列就能零样本输出未来预测，不用针对你的数据重新训练。适合销量、流量、传感器数值这类周期性数据的快速预测。" }
+        },
+        {
+          "@type": "Question",
+          "name": "TimesFM 免费吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "完全免费。模型权重以 Apache 2.0 协议开源，本地跑不花钱。官方还提供 Hugging Face 在线推理入口，不想配环境可以直接用网页版试。成本主要花在你自己的机器和电费上。" }
+        },
+        {
+          "@type": "Question",
+          "name": "TimesFM 需要 GPU 吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不是必须。CPU 也能跑通推理，只是大模型档位会慢。实测 2.0-500m 档位在普通笔记本 CPU 上单条序列预测在秒级完成。批量预测或用更大档位建议上 GPU，装 JAX 时要明确装 CUDA 版。" }
+        },
+        {
+          "@type": "Question",
+          "name": "TimesFM 在 Windows 上能跑吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "能，但绕路。JAX 官方对 Windows 原生支持有限，直接 pip install 容易装到残缺版本。稳妥做法是走 WSL2 或 Docker。只想快速验证效果，用 Hugging Face 的在线 Demo 最省事。" }
+        },
+        {
+          "@type": "Question",
+          "name": "TimesFM 预测结果不准怎么办？",
+          "acceptedAnswer": { "@type": "Answer", "text": "先检查三件事。一是 freq 频率参数和数据实际周期是否一致，二是预测步长是否超出模型单次输出能力，三是历史数据长度是否够一个完整周期。零样本模型对季节突变数据的上限就摆在那里，预测前先做合理预期管理。" }
+        },
+        {
+          "@type": "Question",
+          "name": "TimesFM 和传统时序模型比强在哪？",
+          "acceptedAnswer": { "@type": "Answer", "text": "省训练这一步。ARIMA、Prophet 这类方法要针对每条序列拟合参数，TimesFM 拿到新数据直接推理，跨领域泛化是它的核心卖点。代价是推理资源要求更高，以及超长周期数据上未必比调好的传统模型强，先小范围验证再全量上。" }
+        }
+      ]
+    },
+    {
+      "@type": "VideoObject",
+      "@id": "https://osmarks.com/timesfm.html#video",
+      "name": "TimesFM 上手实录 · 这些坑我全踩了",
+      "description": "开源马克斯出品的 TimesFM 口播排雷视频，同步演示四大坑的报错现场与修复过程。",
+      "uploadDate": "2026-09-26",
+      "thumbnailUrl": "https://osmarks.com/assets/timesfm_keyframe_1.jpg",
+      "embedUrl": "https://www.youtube.com/@osmarks",
+      "publisher": { "@id": "https://osmarks.com/#org" },
+      "inLanguage": "zh-CN"
+    }
+  ]
+}
+</script>
+
+<style>
+:root{
+  --bg:#090d16; --bg2:#0e1422; --card:#131b2e; --card-hover:#182238;
+  --line:#233047; --text:#e8edf5; --muted:#8b98ad;
+  --accent:#ff5c33; --accent2:#ffb020; --green:#3ecf8e; --red:#ff4d5e;
+  --radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--text); line-height:1.7;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:860px;margin:0 auto;padding:0 20px}
+code,pre{font-family:"Cascadia Code",Consolas,"JetBrains Mono",monospace}
+
+/* header */
+header.site{
+  position:sticky;top:0;z-index:50;background:rgba(9,13,22,.86);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--line);
+}
+.site .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px}
+.brand .logo{
+  width:34px;height:34px;border-radius:9px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;font-size:19px;color:#fff;font-weight:900;
+}
+.back{font-size:14px;color:var(--muted);padding:8px 16px;border:1px solid var(--line);border-radius:9px;transition:all .18s}
+.back:hover{color:var(--accent);border-color:var(--accent)}
+
+/* 面包屑 */
+.crumbs{padding:20px 0 0;font-size:13px;color:var(--muted)}
+.crumbs a:hover{color:var(--accent)}
+.crumbs .sep{margin:0 8px;opacity:.5}
+
+/* hero */
+.hero{padding:34px 0 30px}
+.hero h1{font-size:clamp(26px,4.6vw,40px);font-weight:900;line-height:1.3}
+.hero .meta{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:13px;color:var(--muted)}
+.hero .meta .pill{background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:3px 12px}
+.tldr{
+  margin-top:24px;background:linear-gradient(135deg,rgba(255,92,51,.09),rgba(255,176,32,.05));
+  border:1px solid rgba(255,92,51,.3);border-radius:var(--radius);padding:20px 24px;
+}
+.tldr .lt{font-weight:900;font-size:15px;color:var(--accent2);margin-bottom:8px}
+.tldr p{font-size:14.5px}
+
+/* 章节 */
+section.blk{padding:26px 0}
+h2.sect{font-size:22px;font-weight:900;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+h2.sect .no{
+  font-size:13px;color:var(--accent2);background:rgba(255,176,32,.09);
+  border:1px solid rgba(255,176,32,.3);border-radius:8px;padding:2px 10px;font-weight:800;
+}
+.sub{color:var(--muted);font-size:14px;margin-bottom:18px}
+
+/* app 卡 */
+.app-card{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;
+}
+@media(max-width:680px){.app-card{grid-template-columns:repeat(2,1fr)}}
+.app-card .ai{text-align:center}
+.app-card .ai b{display:block;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:4px}
+.app-card .ai span{font-size:14px;font-weight:700}
+
+/* 排雷块 */
+.pit{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  margin-bottom:16px;overflow:hidden;
+}
+.pit summary{
+  list-style:none;cursor:pointer;padding:16px 20px;
+  display:flex;align-items:center;gap:12px;transition:background .18s;
+}
+.pit summary::-webkit-details-marker{display:none}
+.pit summary:hover{background:var(--card-hover)}
+.pit summary .ico{
+  flex-shrink:0;width:30px;height:30px;border-radius:8px;
+  background:rgba(255,77,94,.12);border:1px solid rgba(255,77,94,.3);
+  display:flex;align-items:center;justify-content:center;color:var(--red);font-size:14px;font-weight:900;
+}
+.pit summary .pt{font-weight:800;font-size:15px;flex:1}
+.pit summary .arrow{color:var(--muted);transition:transform .2s;font-size:13px}
+.pit[open] summary .arrow{transform:rotate(90deg)}
+.pit .body{padding:0 20px 20px;border-top:1px solid var(--line)}
+.pit .lbl{font-size:12px;font-weight:800;color:var(--red);margin:16px 0 6px;letter-spacing:.5px}
+.pit .lbl.fix{color:var(--green)}
+.errbox{
+  background:#160a10;border:1px solid rgba(255,77,94,.35);border-radius:9px;
+  padding:12px 16px;font-size:12.5px;color:#ff9aa5;overflow-x:auto;white-space:pre;
+}
+.fixbox{
+  background:rgba(62,207,142,.06);border:1px solid rgba(62,207,142,.3);border-radius:9px;
+  padding:12px 16px;overflow-x:auto;
+}
+.fixbox pre{font-size:12.5px;color:#a8e6c9;line-height:1.6}
+.pit .why{font-size:13.5px;color:var(--muted);margin-top:10px}
+.pit .why b{color:var(--text)}
+
+/* FAQ */
+.faq{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:10px;overflow:hidden}
+.faq summary{list-style:none;cursor:pointer;padding:14px 20px;font-weight:700;font-size:14.5px;display:flex;gap:10px;align-items:center}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:hover{background:var(--card-hover)}
+.faq summary .q{color:var(--accent2);font-weight:900}
+.faq .a{padding:0 20px 16px;font-size:13.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+
+/* 视频区 */
+.videosec{padding:30px 0 10px}
+.vshell{position:relative;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#05080f}
+.vtop{position:relative;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;
+  background:radial-gradient(420px 220px at 68% 32%,rgba(255,92,51,.16),transparent),linear-gradient(160deg,#0c1322,#05080f);
+}
+.vtop .play{
+  width:64px;height:64px;border-radius:50%;cursor:pointer;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;box-shadow:0 8px 28px rgba(255,92,51,.4);
+  transition:transform .2s;
+}
+.vtop .play:hover{transform:scale(1.08)}
+.vtop .vnote{font-size:13px;color:var(--muted)}
+/* 关键帧时间轴 */
+.keyframes{display:flex;gap:8px;padding:14px;overflow-x:auto;border-top:1px solid var(--line);background:var(--bg2)}
+.kf{
+  flex-shrink:0;width:132px;border:1px solid var(--line);border-radius:9px;overflow:hidden;
+  cursor:pointer;transition:border-color .18s;background:var(--card);
+}
+.kf:hover{border-color:var(--accent)}
+.kf .thumb{height:60px;display:flex;align-items:center;justify-content:center;font-size:20px;
+  background:linear-gradient(135deg,#0e1422,#131b2e)}
+.kf .kt{padding:6px 9px;font-size:11px;color:var(--muted);line-height:1.4}
+.kf .kt b{display:block;color:var(--text);font-size:11.5px}
+.vbar{display:flex;gap:10px;padding:0 14px 14px;background:var(--bg2);flex-wrap:wrap}
+.vbar .pnp{
+  padding:8px 18px;border-radius:9px;font-size:13px;font-weight:700;
+  background:var(--card);border:1px solid var(--line);transition:all .18s;
+}
+.vbar .pnp:hover{border-color:var(--accent);color:var(--accent)}
+.vbar .yt{color:var(--accent2);border-color:rgba(255,176,32,.3)}
+
+/* CTA + footer */
+.cta{margin:34px 0;text-align:center;background:linear-gradient(135deg,rgba(255,92,51,.1),rgba(255,176,32,.06));
+  border:1px solid rgba(255,92,51,.3);border-radius:var(--radius);padding:30px 24px}
+.cta h3{font-size:19px;font-weight:900;margin-bottom:8px}
+.cta p{font-size:13.5px;color:var(--muted);margin-bottom:16px}
+.cta a.btn{
+  display:inline-block;padding:12px 28px;border-radius:10px;font-weight:800;font-size:14.5px;color:#fff;
+  background:linear-gradient(135deg,var(--accent),#ff7a4d);box-shadow:0 6px 20px rgba(255,92,51,.3);
+}
+footer.site{border-top:1px solid var(--line);padding:28px 0 44px;background:var(--bg2);font-size:13px;color:var(--muted);text-align:center}
+footer a{color:var(--accent2)}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--card);border:1px solid var(--green);padding:12px 22px;border-radius:11px;font-size:14px;
+  z-index:200;opacity:0;transition:all .3s;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+video.mini{position:fixed;bottom:18px;right:18px;width:320px;z-index:90;border-radius:12px;border:1px solid var(--line);box-shadow:0 10px 40px rgba(0,0,0,.5)}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <span class="logo">马</span>开源马克斯
+    </a>
+    <a class="back" href="index.html">← 回首页</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="crumbs" aria-label="面包屑">
+    <a href="index.html">首页</a><span class="sep">/</span>
+    <a href="index.html#tools">排雷实录</a><span class="sep">/</span>
+    <span>TimesFM</span>
+  </nav>
+</div>
+
+<div class="wrap">
+  <!-- Hero + 直答块 -->
+  <section class="hero">
+    <h1>TimesFM 排雷实录<br>环境、参数、数据三大坑全记录</h1>
+    <div class="meta">
+      <span class="pill">✍️ 开源马克斯 · 2026-09-19</span>
+      <span class="pill">⏱ 实测约 30 分钟可跑通</span>
+      <span class="pill">🆓 模型免费 · Apache 2.0</span>
+      <span class="pill">📦 google-research/timesfm</span>
+    </div>
+    <div class="tldr" id="tldr">
+      <div class="lt">TL;DR 先说结论</div>
+      <p>TimesFM 是 Google Research 开源的时序预测基础模型，拿到历史数据零样本就能出预测，不用重新训练。想最快体验就走 Hugging Face 在线 Demo。想本地跑，记住三件事，用 WSL2 别硬刚 Windows 原生 JAX，锁死版本组合再安装，预测步长和输出 patch 对齐。下面四个坑是我真金白银踩出来的，报错信息和补丁全公开，照抄就能跑通。</p>
+    </div>
+  </section>
+
+  <!-- 工具档案 -->
+  <section class="blk" id="app">
+    <h2 class="sect"><span class="no">档案</span>TimesFM 是个什么货</h2>
+    <p class="sub">先认识一下，再决定值不值得装。</p>
+    <div class="app-card">
+      <div class="ai"><b>出品方</b><span>Google Research</span></div>
+      <div class="ai"><b>授权协议</b><span>Apache 2.0</span></div>
+      <div class="ai"><b>核心能力</b><span>零样本时序预测</span></div>
+      <div class="ai"><b>技术底座</b><span>JAX 与 PyTorch</span></div>
+    </div>
+    <p style="margin-top:14px;font-size:14px;color:var(--muted)">一句话讲明白它。传统方法像裁缝，ARIMA、Prophet 拿到你的数据现量体裁衣，一条序列拟合一次。TimesFM 像成衣，预训练阶段把海量时间序列切成 patch 喂进去，推理时直接套用，销量、流量、传感器数据拿来就能出预测。代价是推理吃资源，还有别指望它懂你业务里的独家门道，它只认数据形状。</p>
+  </section>
+
+  <!-- 排雷正文 -->
+  <section class="blk" id="pits">
+    <h2 class="sect"><span class="no">正片</span>四大坑与修复补丁</h2>
+    <p class="sub">按踩中频率从高到低排。点开看报错现场和补丁，命令可直接抄。</p>
+
+    <details class="pit" id="pit1" open>
+      <summary><span class="ico">1</span><span class="pt">pip 一把梭装完，示例代码直接报错</span><span class="arrow">▶</span></summary>
+      <div class="body">
+        <div class="lbl">报错现场</div>
+        <div class="errbox">AttributeError: module 'timesfm' has no attribute 'TimesFm'
+TypeError: TimesFmHparams.__init__() got an unexpected keyword argument 'backend'</div>
+        <div class="lbl fix">修复补丁</div>
+        <div class="fixbox"><pre># 1.x 到 2.x 的 API 改了不止一星半点，checkpoint 也从 GitHub 仓库搬去了 Hugging Face
+# 别追最新，先锁一组验证过的版本组合
+pip install "timesfm[torch]==2.0.0"
+
+# 加载走 Hugging Face，旧教程里的 google checkpoint 路径已作废
+import timesfm
+model = timesfm.TimesFm(
+    hparams=timesfm.TimesFmHparams(
+        backend="torch",
+        per_core_batch_size=32,
+        horizon_len=128,
+    ),
+    checkpoint=timesfm.TimesFmCheckpoint(
+        huggingface_repo_id="google/timesfm-2.0-500m-pytorch"),
+)</pre></div>
+        <p class="why"><b>为什么坑。</b>这个仓库还在活跃迭代，1.x 和 2.x 的类名、参数、加载方式全变了。网上教程一半是旧版的，照抄必炸。新手上路永远先看仓库 README 的当前版本示例。</p>
+      </div>
+    </details>
+
+    <details class="pit" id="pit2">
+      <summary><span class="ico">2</span><span class="pt">JAX 装成了 CPU 版，GPU 一直在睡觉</span><span class="arrow">▶</span></summary>
+      <div class="body">
+        <div class="lbl">报错现场</div>
+        <div class="errbox"># 不报错，但跑得像蜗牛
+print(jax.devices())   # 输出 CpuDevice(id=0)，看不到 GPU</div>
+        <div class="lbl fix">修复补丁</div>
+        <div class="fixbox"><pre># 先卸干净再装 GPU 版，CUDA 版本要与驱动匹配
+pip uninstall jax jaxlib -y
+pip install -U "jax[cuda12]"
+
+# 验证
+python -c "import jax; print(jax.devices())"
+# 期望输出 CudaDevice(id=0)</pre></div>
+        <p class="why"><b>为什么坑。</b>Windows 原生环境 pip 默认给 CPU 版，而且 JAX 官方对 Windows 原生支持一直半吊子。Linux 或 WSL2 里装 CUDA 版才稳。机器没有 N 卡的话直接 CPU 版跑小模型档位，别在这上面耗一天。</p>
+      </div>
+    </details>
+
+    <details class="pit" id="pit3">
+      <summary><span class="ico">3</span><span class="pt">预测步长一改就截断，输出长度对不上</span><span class="arrow">▶</span></summary>
+      <div class="body">
+        <div class="lbl">报错现场</div>
+        <div class="errbox"># 想预测 500 步，结果只回了 128 步，后面全是截断
+ValueError: horizon_len exceeds model's max output capability</div>
+        <div class="lbl fix">修复补丁</div>
+        <div class="fixbox"><pre># 预测长度受 output patch len 约束，超长预测要滑动分窗滚动出
+# 方案一 初始化时把 horizon_len 设成你要的长度（受模型上限约束）
+# 方案二 长预测用滚动窗口，每次吃进最新预测继续往后推
+def rolling_forecast(model, series, total_horizon, window):
+    preds = []
+    cur = series
+    while sum(len(p) for p in preds) < total_horizon:
+        _, out = model.forecast(cur, freq=1)
+        preds.append(out)
+        cur = list(cur) + list(out[0][:window])
+    return [v for p in preds for v in p][:total_horizon]</pre></div>
+        <p class="why"><b>为什么坑。</b>很多教程只演示默认 128 步，等你业务真要预测半年日销量才知道有上限。滚动外推误差会累积，长预测务必留个心眼，别拿它当真理。</p>
+      </div>
+    </details>
+
+    <details class="pit" id="pit4">
+      <summary><span class="ico">4</span><span class="pt">数据格式不对，forecast 一调用就炸</span><span class="arrow">▶</span></summary>
+      <div class="body">
+        <div class="lbl">报错现场</div>
+        <div class="errbox">ValueError: Input must be a list of 1-D numpy arrays
+KeyError: 'ds'   # DataFrame 缺少约定列名 ds</div>
+        <div class="lbl fix">修复补丁</div>
+        <div class="fixbox"><pre># 裸数组路线，注意 freq 是整数枚举，0 一分钟 1 小时 2 天 3 周
+import numpy as np
+hist = [np.array(your_values, dtype=np.float32)]
+point, quantiles = model.forecast(hist, freq=2)
+
+# DataFrame 路线，列名必须是 ds 和 y，少一个都报 KeyError
+import pandas as pd
+df = pd.DataFrame({"ds": dates, "y": values})</pre></div>
+        <p class="why"><b>为什么坑。</b>freq 参数全靠背数字，文档里藏着掖着。列名硬编码 ds 和 y，跟你业务里的 date 和 sales 八竿子打不着，改个名就好，但报错信息完全不提示，第一次谁都得懵。</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- FAQ -->
+  <section class="blk" id="faqsec">
+    <h2 class="sect"><span class="no">问答</span>高频六连问</h2>
+    <p class="sub">选自后台和社区问得最多的。</p>
+    <details class="faq"><summary><span class="q">Q</span>TimesFM 到底是什么？</summary><div class="a">Google Research 开源的时序预测基础模型。把时间序列切 patch 预训练，拿到历史序列零样本直接出未来预测，不用针对你的数据再训练。销量、流量、传感器数值这类周期性数据都适用。</div></details>
+    <details class="faq"><summary><span class="q">Q</span>要花钱吗？</summary><div class="a">不要。权重以 Apache 2.0 开源，本地跑零成本，官方还有 Hugging Face 在线入口可以直接试。花钱的只有你自己的机器和电费。</div></details>
+    <details class="faq"><summary><span class="q">Q</span>必须要有 GPU 吗？</summary><div class="a">不是必须。CPU 也能推理，小档位秒级出结果。批量预测或大档位建议上 GPU，而且装 JAX 时要明确装 CUDA 版，默认 pip 装的是 CPU 版。</div></details>
+    <details class="faq"><summary><span class="q">Q</span>Windows 原生能跑吗？</summary><div class="a">能，但别硬刚。JAX 对 Windows 原生支持很敷衍，直接装容易踩坑。走 WSL2 或 Docker 稳得多。只想验证效果，用 Hugging Face 在线 Demo 最省事。</div></details>
+    <details class="faq"><summary><span class="q">Q</span>预测结果不准怎么办？</summary><div class="a">先查三件事。freq 参数和数据实际周期是否一致，预测步长有没有超模型上限，历史数据够不够一个完整周期。零样本模型对季节突变数据的上限摆在那里，先管理预期再调优。</div></details>
+    <details class="faq"><summary><span class="q">Q</span>比 ARIMA、Prophet 强在哪？</summary><div class="a">省掉逐条拟合这一步，新数据直接推理，跨领域泛化是核心卖点。代价是吃推理资源，且调好的传统模型在特定长周期数据上未必输。建议小范围验证后全量上。</div></details>
+  </section>
+
+  <!-- 视频 -->
+  <section class="videosec" id="video">
+    <h2 class="sect"><span class="no">视频</span>口播排雷 · 支持画中画</h2>
+    <p class="sub">视频我本人出镜。点关键帧直达对应坑位，小窗画中画挂着边干边看。</p>
+    <div class="vshell">
+      <div class="vtop" id="vtop">
+        <div class="play" id="playBtn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <span class="vnote">TimesFM 上手实录 · 口播录制中，上线即更新</span>
+      </div>
+      <div class="keyframes" id="keyframes">
+        <div class="kf" data-anchor="pit1"><div class="thumb">📦</div><div class="kt"><b>坑1 装完就报错</b>版本锁死再安装</div></div>
+        <div class="kf" data-anchor="pit2"><div class="thumb">🎮</div><div class="kt"><b>坑2 GPU 在睡觉</b>JAX 后端检查</div></div>
+        <div class="kf" data-anchor="pit3"><div class="thumb">📏</div><div class="kt"><b>坑3 输出被截断</b>预测步长对齐</div></div>
+        <div class="kf" data-anchor="pit4"><div class="thumb">🧾</div><div class="kt"><b>坑4 数据格式炸</b>列名与 freq 枚举</div></div>
+      </div>
+      <div class="vbar">
+        <button class="pnp" id="pnpBtn" disabled>🖼️ 画中画小窗</button>
+        <a class="pnp yt" href="https://www.youtube.com/@osmarks" target="_blank" rel="noopener">▶ 去频道看全部排雷视频</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta">
+    <h3>这份排雷白嫖，转发随意</h3>
+    <p>测试排雷永久免费，不接软文。觉得有用就转给那个正被 JAX 折磨的朋友。</p>
+    <a class="btn" href="index.html">回首页看工具总榜</a>
+  </div>
+</div>
+
+<footer class="site">
+  <div class="wrap">
+    © 2026 osmarks.com 开源马克斯 · 评测排雷全公开免费 · 企业私有化定制另聊 ·
+    <a href="index.html">首页</a>
+  </div>
+</footer>
+
+<video id="vid" class="mini" style="display:none" playsinline></video>
+<div class="toast" id="toast"></div>
+
+<script>
+/* toast */
+let tt;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(tt); tt = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* 播放与画中画 */
+const vid = document.getElementById('vid');
+const playBtn = document.getElementById('playBtn');
+const pnpBtn = document.getElementById('pnpBtn');
+
+playBtn.addEventListener('click', ()=>{
+  toast('首期口播正在录制，上线后这里直接能播');
+});
+
+pnpBtn.addEventListener('click', async ()=>{
+  try{
+    if(document.pictureInPictureElement){
+      await document.exitPictureInPicture();
+      pnpBtn.textContent = '🖼️ 画中画小窗';
+    }else{
+      await vid.requestPictureInPicture();
+      pnpBtn.textContent = '↩️ 退出画中画';
+    }
+  }catch(e){
+    toast('当前浏览器不支持画中画');
+  }
+});
+
+/* 关键帧跳转 */
+document.querySelectorAll('.kf').forEach(k=>{
+  k.addEventListener('click', ()=>{
+    const id = k.dataset.anchor;
+    const el = document.getElementById(id);
+    if(el){
+      el.open = true;
+      el.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+    toast('视频对应章节 · ' + k.querySelector('b').textContent);
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,2279 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="day">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>osmarks v6 视觉演进探索稿 · Lab Draft</title>
+  <meta name="description" content="osmarks.com v6 探索稿：在 v5 基础上往前探一步，自包含预览">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <!-- Google Fonts Nunito CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ============================================================
+       00. 字体栈与本地 fallback（严守 DNA 宪法：唯一字体家族 Nunito）
+       ============================================================ */
+    @font-face {
+      font-family: 'Nunito';
+      src: url('../assets/fonts/Nunito-400.woff2') format('woff2');
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Nunito';
+      src: url('../assets/fonts/Nunito-700.woff2') format('woff2');
+      font-weight: 700;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Nunito';
+      src: url('../assets/fonts/Nunito-800.woff2') format('woff2');
+      font-weight: 800;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Nunito';
+      src: url('../assets/fonts/Nunito-900.woff2') format('woff2');
+      font-weight: 900;
+      font-display: swap;
+    }
+
+    /* ============================================================
+       01. 核心调色板变量（恪守 DNA 七个变量，日夜双模从这衍生）
+       ============================================================ */
+    :root {
+      /* v5 核心色相 */
+      --aqua: #39d8ff;
+      --lime: #d78cff; /* 注：v5 中 --lime 实为紫 #d78cff */
+      --ink: #edf7ff;
+      --muted: #a9bfd6;
+      --bg: #040b18;
+      --panel: rgba(5, 15, 31, 0.70);
+      --panel-hover: rgba(9, 24, 46, 0.82);
+      --line: rgba(137, 205, 255, 0.22);
+      
+      /* 批注专用柔和色系（从核心色衍生） */
+      --note-bg: rgba(7, 19, 38, 0.78);
+      --note-border: rgba(57, 216, 255, 0.40);
+      --note-tag: rgba(57, 216, 255, 0.15);
+      
+      /* 背景图槽位 */
+      --backdrop-img: url('../assets/img/noon-a.png');
+      --ambient-flare: radial-gradient(circle at 78% 38%, transparent 0, rgba(7,16,13,.24) 58%, rgba(5,12,9,.48) 100%);
+      --backdrop-filter: saturate(1.1) contrast(1.03);
+    }
+
+    /* 夜间模式（深色渐变 + 柔和光斑处理） */
+    html[data-theme="night"] {
+      --bg: #01040a;
+      --panel: rgba(3, 10, 22, 0.82);
+      --panel-hover: rgba(5, 15, 32, 0.92);
+      --line: rgba(137, 205, 255, 0.16);
+      --ink: #ffffff;
+      --muted: #8faec9;
+      --note-bg: rgba(2, 7, 16, 0.88);
+      --note-border: rgba(215, 140, 255, 0.45);
+      --backdrop-img: url('../assets/img/night-a.png');
+      --ambient-flare: 
+        radial-gradient(circle at 82% 28%, rgba(57, 216, 255, 0.14) 0%, transparent 45%),
+        radial-gradient(circle at 65% 72%, rgba(215, 140, 255, 0.10) 0%, transparent 50%),
+        radial-gradient(circle at 20% 40%, rgba(57, 216, 255, 0.06) 0%, transparent 60%);
+      --backdrop-filter: saturate(1.15) contrast(1.08) brightness(0.92);
+    }
+
+    /* ============================================================
+       02. 全局重置与排版基础
+       ============================================================ */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Nunito", "M PLUS Rounded 1c", "Arial Rounded MT Bold", system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.55;
+      overflow-x: hidden;
+      transition: background-color 0.4s ease, color 0.3s ease;
+      min-height: 100vh;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font-family: inherit;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .tabular {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ============================================================
+       03. 全屏三时段背景机制（v5 灵魂，保留 float 22s）
+       ============================================================ */
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      background-image: var(--backdrop-img);
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      animation: float 22s ease-in-out infinite alternate;
+      filter: var(--backdrop-filter);
+      z-index: 0;
+      pointer-events: none;
+      transition: background-image 0.6s ease, filter 0.6s ease;
+    }
+
+    .backdrop::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(4,11,24,0.96) 0%, rgba(4,11,24,0.86) 38%, rgba(4,11,24,0.48) 70%, rgba(4,11,24,0.22) 100%);
+      transition: background 0.4s ease;
+    }
+
+    .backdrop::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--ambient-flare);
+      transition: background 0.5s ease;
+    }
+
+    @keyframes float {
+      from { transform: scale(1.02) translate3d(-0.5%, 0, 0); }
+      to   { transform: scale(1.08) translate3d(1.2%, -0.8%, 0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .backdrop { animation: none; }
+      * { transition-duration: 0.01ms !important; }
+    }
+
+    /* ============================================================
+       04. 布局框架（严格遵循 DNA 左偏 2cm 刻意设计）
+       ============================================================ */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 1240px;
+      margin: auto;
+      padding: 0 38px;
+      min-height: 100vh;
+    }
+
+    /* 宽屏断点：901px 以上执行左偏 */
+    @media (min-width: 901px) {
+      .page {
+        left: -2cm;
+      }
+      .nav, .content-wrap {
+        position: relative;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .page {
+        left: 0;
+        padding: 0 20px;
+      }
+    }
+
+    /* ============================================================
+       05. 顶部导航与全局日夜模式切换
+       ============================================================ */
+    .nav {
+      height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.07em;
+    }
+
+    .brand b {
+      color: var(--lime);
+    }
+
+    .lab-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(57, 216, 255, 0.12);
+      border: 1px solid rgba(57, 216, 255, 0.32);
+      color: var(--aqua);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .lab-badge::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--aqua);
+      box-shadow: 0 0 8px var(--aqua);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav-link-pill {
+      border: 1px solid var(--line);
+      background: rgba(8, 20, 36, 0.4);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .nav-link-pill:hover {
+      color: var(--ink);
+      border-color: var(--aqua);
+      background: rgba(57, 216, 255, 0.1);
+    }
+
+    .theme-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 15px;
+      border-radius: 999px;
+      background: rgba(57, 216, 255, 0.15);
+      border: 1px solid var(--aqua);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      transition: all 0.25s ease;
+      box-shadow: 0 0 16px rgba(57, 216, 255, 0.2);
+    }
+
+    .theme-toggle-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(57, 216, 255, 0.35);
+      background: rgba(57, 216, 255, 0.25);
+    }
+
+    /* ============================================================
+       06. 探索稿头部介绍公告
+       ============================================================ */
+    .lab-intro-banner {
+      margin-top: 32px;
+      padding: 20px 24px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      backdrop-filter: blur(16px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .lab-intro-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lab-intro-desc {
+      font-size: 13px;
+      color: var(--muted);
+      max-width: 720px;
+      line-height: 1.6;
+      margin-top: 4px;
+    }
+
+    .lab-jump-nav {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .lab-jump-btn {
+      font-size: 11px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(8, 20, 36, 0.4);
+    }
+
+    .lab-jump-btn:hover {
+      color: var(--aqua);
+      border-color: var(--aqua);
+    }
+
+    /* ============================================================
+       07. 分区母容器与“左探索展示 + 右批注”布局
+       ============================================================ */
+    .section-block {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-header {
+      margin-bottom: 24px;
+    }
+
+    .section-tag {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      color: var(--lime);
+      margin-bottom: 6px;
+    }
+
+    .section-title {
+      font-size: clamp(24px, 3.2vw, 36px);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.15;
+    }
+
+    .section-subtitle {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 4px;
+      max-width: 680px;
+    }
+
+    /* 左右分栏容器 */
+    .split-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 28px;
+      align-items: start;
+    }
+
+    @media (max-width: 980px) {
+      .split-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* 主展示区 */
+    .showcase-area {
+      min-width: 0;
+    }
+
+    /* 右侧批注栏（小号批注样式，不喧宾夺主） */
+    .annotation-card {
+      background: var(--note-bg);
+      border-left: 3px solid var(--aqua);
+      border-top: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      border-radius: 0 16px 16px 0;
+      padding: 18px 18px 18px 20px;
+      backdrop-filter: blur(16px);
+      font-size: 12px;
+      line-height: 1.65;
+      color: var(--muted);
+      position: sticky;
+      top: 24px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .annotation-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .annotation-kicker {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: var(--aqua);
+    }
+
+    .annotation-status {
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(57, 216, 255, 0.12);
+      color: var(--ink);
+    }
+
+    .annotation-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .annotation-list li {
+      position: relative;
+      padding-left: 14px;
+    }
+
+    .annotation-list li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--aqua);
+      font-weight: 800;
+    }
+
+    .annotation-list strong {
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    /* ============================================================
+       08. 玻璃卡通用样式（v5 宪法标准：18-20px圆角、--panel底）
+       ============================================================ */
+    .glass-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 24px;
+      backdrop-filter: blur(18px);
+      transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    /* ============================================================
+       09. 专区 1: HERO 排印精修（A/B/C 三档对比 + 主视觉小样）
+       ============================================================ */
+    .hero-compare-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 820px) {
+      .hero-compare-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .typo-specimen-card {
+      background: rgba(8, 20, 36, 0.55);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px 20px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    .typo-specimen-card:hover, .typo-specimen-card.active {
+      border-color: var(--aqua);
+      background: rgba(12, 28, 50, 0.75);
+      transform: translateY(-2px);
+    }
+
+    .typo-specimen-card.active::after {
+      content: "当前选用主视觉 ✓";
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--aqua);
+      background: rgba(57, 216, 255, 0.15);
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(57, 216, 255, 0.3);
+    }
+
+    .typo-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    /* 方案 A: 紧致冲击型 */
+    .typo-title-a {
+      font-weight: 900;
+      font-size: 26px;
+      line-height: 1.04;
+      letter-spacing: -0.065em;
+      margin-bottom: 8px;
+    }
+
+    /* 方案 B: 舒展空气感（推荐） */
+    .typo-title-b {
+      font-weight: 800;
+      font-size: 26px;
+      line-height: 1.14;
+      letter-spacing: -0.035em;
+      margin-bottom: 8px;
+    }
+
+    /* 方案 C: 极简克制型 */
+    .typo-title-c {
+      font-weight: 700;
+      font-size: 26px;
+      line-height: 1.22;
+      letter-spacing: -0.015em;
+      margin-bottom: 8px;
+    }
+
+    .mark-word {
+      color: var(--lime);
+      text-shadow: 0 0 28px rgba(215, 140, 255, 0.28);
+    }
+
+    .typo-params {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .param-pill {
+      font-size: 11px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.04);
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* 主视觉大样渲染区 */
+    .hero-master-stage {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 44px 38px;
+      backdrop-filter: blur(20px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-master-stage::before {
+      content: "HERO MASTER PREVIEW · 主视觉实感落地";
+      position: absolute;
+      top: 14px;
+      left: 20px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    .hero-display-h1 {
+      margin-top: 16px;
+      font-size: clamp(38px, 5.4vw, 68px);
+      max-width: 640px;
+      transition: all 0.3s ease;
+    }
+
+    .hero-display-p {
+      font-size: 18px;
+      color: #dce8df;
+      max-width: 540px;
+      margin-top: 16px;
+      line-height: 1.55;
+    }
+
+    .hero-display-p b {
+      color: var(--ink);
+    }
+
+    /* ============================================================
+       10. 专区 2: 暗色模式对比展示
+       ============================================================ */
+    .darkmode-preview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 720px) {
+      .darkmode-preview-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .mode-card {
+      border-radius: 18px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      position: relative;
+    }
+
+    .mode-card-day {
+      background: rgba(6, 18, 38, 0.75);
+    }
+
+    .mode-card-night {
+      background: rgba(2, 6, 14, 0.88);
+      border-color: rgba(57, 216, 255, 0.28);
+      box-shadow: 0 0 30px rgba(57, 216, 255, 0.08);
+    }
+
+    .mode-kicker {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .mode-sample-glass {
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+
+    .day-glass {
+      background: rgba(5, 15, 31, 0.70);
+      border: 1px solid rgba(137, 205, 255, 0.22);
+    }
+
+    .night-glass {
+      background: rgba(3, 10, 22, 0.82);
+      border: 1px solid rgba(137, 205, 255, 0.16);
+      box-shadow: inset 0 0 16px rgba(57, 216, 255, 0.04);
+    }
+
+    /* ============================================================
+       11. 专区 3: 工具卡片微交互（3 种反馈对比）
+       ============================================================ */
+    .interactions-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    @media (max-width: 860px) {
+      .interactions-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .demo-toolcard {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .demo-card-kicker {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .demo-toolcard h3 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 6px;
+    }
+
+    .demo-toolcard p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .demo-card-footer {
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+    }
+
+    .demo-card-metric {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--lime);
+    }
+
+    .demo-card-action {
+      font-size: 12px;
+      color: var(--aqua);
+      font-weight: 700;
+    }
+
+    /* 方案 1: 光泽扫过 (Gloss Sweep) */
+    .hover-opt-1 {
+      transition: border-color 0.25s ease;
+    }
+
+    .hover-opt-1::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -60%;
+      width: 40%;
+      height: 200%;
+      background: linear-gradient(
+        115deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.03) 30%,
+        rgba(57, 216, 255, 0.22) 50%,
+        rgba(255, 255, 255, 0.05) 70%,
+        transparent 100%
+      );
+      transform: rotate(25deg);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .hover-opt-1:hover {
+      border-color: rgba(57, 216, 255, 0.5);
+    }
+
+    .hover-opt-1:hover::before {
+      opacity: 1;
+      animation: glossSweep 0.75s ease forwards;
+    }
+
+    @keyframes glossSweep {
+      0%   { left: -60%; }
+      100% { left: 160%; }
+    }
+
+    /* 方案 2: 轻浮起 + 扩散投影 (Soft Lift & Ambient Shadow) */
+    .hover-opt-2 {
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .hover-opt-2:hover {
+      transform: translateY(-5px);
+      background: var(--panel-hover);
+      border-color: rgba(137, 205, 255, 0.45);
+      box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.5), 0 0 20px rgba(57, 216, 255, 0.12);
+    }
+
+    /* 方案 3: 边框描光 / 轮廓点亮 (Border Trace / Edge Glow) */
+    .hover-opt-3 {
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .hover-opt-3:hover {
+      border-color: var(--aqua);
+      box-shadow: inset 0 0 0 1px rgba(57, 216, 255, 0.35), 0 0 20px rgba(57, 216, 255, 0.16);
+    }
+
+    /* ============================================================
+       12. 专区 4: "Run this model" 按钮组件三态
+       ============================================================ */
+    .cta-showcase-container {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 28px;
+      backdrop-filter: blur(18px);
+    }
+
+    .cta-matrix-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 820px) {
+      .cta-matrix-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .cta-state-card {
+      background: rgba(8, 20, 36, 0.5);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      text-align: center;
+    }
+
+    .cta-state-label {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    /* 主 CTA 按钮核心结构 */
+    .btn-run-model {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      color: var(--ink);
+      background: rgba(57, 216, 255, 0.14);
+      border: 1px solid var(--aqua);
+      box-shadow: 0 4px 18px rgba(57, 216, 255, 0.18);
+      transition: all 0.2s ease;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .btn-run-model .provider-chip {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--aqua);
+      background: rgba(57, 216, 255, 0.18);
+      padding: 2px 7px;
+      border-radius: 999px;
+    }
+
+    .btn-run-model .ext-icon {
+      font-size: 14px;
+      color: var(--aqua);
+      transition: transform 0.2s ease;
+    }
+
+    /* Hover 态 */
+    .btn-run-model.state-hover, .btn-run-model:hover:not(:disabled) {
+      background: rgba(57, 216, 255, 0.28);
+      border-color: #72e3ff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(57, 216, 255, 0.35);
+      color: #ffffff;
+    }
+
+    .btn-run-model.state-hover .ext-icon, .btn-run-model:hover:not(:disabled) .ext-icon {
+      transform: translate(2px, -2px);
+    }
+
+    /* Loading 态 */
+    .btn-run-model.state-loading, .btn-run-model:disabled {
+      background: rgba(137, 205, 255, 0.12);
+      border-color: rgba(137, 205, 255, 0.35);
+      color: var(--muted);
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(57, 216, 255, 0.3);
+      border-top-color: var(--aqua);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* 试玩交互沙盒 */
+    .cta-interactive-sandbox {
+      border-top: 1px solid var(--line);
+      padding-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .sandbox-desc {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* ============================================================
+       13. 专区 5: Playground 模块占位骨架
+       ============================================================ */
+    .playground-skeleton {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+    }
+
+    .pg-topbar {
+      padding: 14px 20px;
+      background: rgba(8, 20, 36, 0.65);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .pg-model-select {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pg-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .pg-dropdown {
+      background: rgba(5, 15, 31, 0.8);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 8px;
+      padding: 6px 12px;
+      outline: none;
+    }
+
+    .pg-dropdown:focus {
+      border-color: var(--aqua);
+    }
+
+    .pg-specs {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .pg-spec-tag {
+      color: var(--aqua);
+      font-weight: 700;
+    }
+
+    .pg-body {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      min-height: 280px;
+    }
+
+    @media (max-width: 820px) {
+      .pg-body {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .pg-input-col {
+      padding: 20px;
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    @media (max-width: 820px) {
+      .pg-input-col {
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+      }
+    }
+
+    .pg-textarea {
+      width: 100%;
+      height: 140px;
+      background: transparent;
+      border: none;
+      resize: none;
+      outline: none;
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .pg-input-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .token-counter {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .pg-run-btn {
+      background: var(--aqua);
+      color: #030d1c;
+      font-weight: 800;
+      font-size: 13px;
+      padding: 7px 16px;
+      border-radius: 999px;
+      transition: all 0.2s ease;
+    }
+
+    .pg-run-btn:hover {
+      background: #72e3ff;
+      transform: translateY(-1px);
+    }
+
+    .pg-output-col {
+      padding: 20px;
+      background: rgba(3, 9, 20, 0.4);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .pg-output-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .pg-output-meta {
+      font-size: 12px;
+      color: var(--lime);
+      font-weight: 700;
+    }
+
+    .pg-output-text {
+      font-size: 13.5px;
+      line-height: 1.65;
+      color: #d8e6f3;
+    }
+
+    .pg-output-footer {
+      margin-top: 16px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .pg-mini-btn {
+      font-size: 12px;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    .pg-mini-btn:hover {
+      color: var(--ink);
+      border-color: var(--aqua);
+    }
+
+    /* ============================================================
+       14. 专区 6: 捐助 + 分站招募条（全英文文案，双通道整合）
+       ============================================================ */
+    .community-banner {
+      background: linear-gradient(135deg, rgba(8, 22, 44, 0.78) 0%, rgba(5, 14, 28, 0.88) 100%);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 34px 30px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.3);
+    }
+
+    .banner-main-title {
+      font-size: clamp(22px, 3vw, 32px);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.15;
+      margin-bottom: 24px;
+      max-width: 680px;
+    }
+
+    .banner-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 760px) {
+      .banner-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .banner-pillar-card {
+      background: rgba(6, 17, 34, 0.6);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .pillar-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      color: var(--aqua);
+    }
+
+    .pillar-heading {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-top: 4px;
+    }
+
+    .pillar-prose {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.58;
+    }
+
+    .pillar-btn-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-solid-aqua {
+      background: var(--aqua);
+      color: #041224;
+      font-weight: 800;
+      font-size: 13px;
+      padding: 9px 18px;
+      border-radius: 999px;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-solid-aqua:hover {
+      background: #72e3ff;
+      transform: translateY(-2px);
+    }
+
+    .btn-outline-glass {
+      background: rgba(10, 26, 48, 0.5);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      font-weight: 800;
+      font-size: 13px;
+      padding: 9px 18px;
+      border-radius: 999px;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-outline-glass:hover {
+      border-color: var(--aqua);
+      color: var(--aqua);
+      transform: translateY(-2px);
+    }
+
+    .pillar-foot-note {
+      font-size: 11.5px;
+      color: var(--muted);
+      opacity: 0.8;
+    }
+
+    /* ============================================================
+       15. 专区 7: rankings 表格升级小样（v4 极光风向 v5 语言过渡）
+       ============================================================ */
+    .rankings-stage {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 24px;
+      backdrop-filter: blur(18px);
+    }
+
+    .rankings-filter-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .tab-pills {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tab-pill {
+      font-size: 13px;
+      font-weight: 800;
+      padding: 7px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(8, 20, 36, 0.4);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-pill.active {
+      background: rgba(57, 216, 255, 0.18);
+      border-color: var(--aqua);
+      color: var(--ink);
+    }
+
+    .rankings-search-box {
+      background: rgba(8, 20, 36, 0.5);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 16px;
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      width: 200px;
+      transition: border-color 0.2s ease;
+    }
+
+    .rankings-search-box:focus {
+      border-color: var(--aqua);
+    }
+
+    .rankings-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .rankings-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .rankings-table td {
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      font-size: 13.5px;
+      vertical-align: middle;
+      transition: background 0.15s ease;
+    }
+
+    .rankings-table tr:hover td {
+      background: rgba(57, 216, 255, 0.05);
+    }
+
+    .rank-cell {
+      font-size: 18px;
+      font-weight: 900;
+      width: 44px;
+      color: var(--muted);
+    }
+
+    .rank-cell.top-1 {
+      color: var(--aqua);
+    }
+    .rank-cell.top-2 {
+      color: var(--lime);
+    }
+    .rank-cell.top-3 {
+      color: #7cefff;
+    }
+
+    .tool-info-cell strong {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: inline-block;
+      margin-bottom: 2px;
+    }
+
+    .tool-info-cell p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .cat-badge {
+      display: inline-block;
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(8, 20, 36, 0.4);
+      color: #c7d8e8;
+      white-space: nowrap;
+    }
+
+    .metric-cell {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--lime);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .metric-cell small {
+      display: block;
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .action-cell {
+      text-align: right;
+      width: 60px;
+    }
+
+    .action-link {
+      font-size: 12px;
+      color: var(--aqua);
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+    }
+
+    .action-link:hover {
+      border-color: var(--aqua);
+      background: rgba(57, 216, 255, 0.1);
+    }
+
+    /* ============================================================
+       16. 页尾
+       ============================================================ */
+    .lab-footer {
+      margin-top: 60px;
+      padding: 30px 0 50px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      flex-wrap: wrap;
+    }
+
+    .lab-footer a:hover {
+      color: var(--aqua);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 全屏三时段人物背景图（保留 float 22s 灵魂动效） -->
+  <div class="backdrop" id="backdropEl" aria-hidden="true"></div>
+
+  <main class="page">
+    <!-- 顶部导航栏 -->
+    <header class="nav">
+      <div class="brand-wrap">
+        <a class="brand" href="../index.html">os<b>marks</b></a>
+        <span class="lab-badge">v6 探索稿 · LAB PREVIEW</span>
+      </div>
+
+      <div class="nav-actions">
+        <a class="nav-link-pill" href="#hero-typo">01 排印</a>
+        <a class="nav-link-pill" href="#dark-mode">02 暗色</a>
+        <a class="nav-link-pill" href="#card-hover">03 微交互</a>
+        <a class="nav-link-pill" href="#cta-button">04 CTA按钮</a>
+        <a class="nav-link-pill" href="#playground">05 试玩区</a>
+        <a class="nav-link-pill" href="#community-banner">06 社区</a>
+        <a class="nav-link-pill" href="#rankings-v5">07 榜单</a>
+        
+        <!-- 日/夜即时切换按钮 -->
+        <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="切换日间/夜间模式">
+          <span id="themeIcon">☀️</span>
+          <span id="themeLabel">当前：日间模式（点击切夜间）</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- 探索说明横幅 -->
+    <div class="lab-intro-banner">
+      <div>
+        <div class="lab-intro-title">
+          <span>🧬</span>
+          <span>osmarks v6 视觉演进探索草案（只出稿 · 不动线上资产）</span>
+        </div>
+        <p class="lab-intro-desc">
+          本页面为自包含预览（CSS全部内联，双击本地即开），严格遵循 <code>design-team/DNA.md</code> 宪法：
+          唯一 Nunito 家族、左偏 2cm 刻意留白、全屏三时段人物图、玻璃卡面板。每区右侧配 3-5 行中文设计批注，清晰说明演进理由。
+        </p>
+      </div>
+      <div class="lab-jump-nav">
+        <a class="lab-jump-btn" href="#hero-typo">#1 Hero排印</a>
+        <a class="lab-jump-btn" href="#dark-mode">#2 深色模式</a>
+        <a class="lab-jump-btn" href="#card-hover">#3 卡片交互</a>
+        <a class="lab-jump-btn" href="#cta-button">#4 CTA组件</a>
+        <a class="lab-jump-btn" href="#playground">#5 Playground</a>
+        <a class="lab-jump-btn" href="#community-banner">#6 招募条</a>
+        <a class="lab-jump-btn" href="#rankings-v5">#7 榜单过渡</a>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         专区 1: Hero 排印精修
+         ============================================================ -->
+    <section class="section-block" id="hero-typo">
+      <div class="section-header">
+        <span class="section-tag">EXPLORATION 01</span>
+        <h2 class="section-title">Hero 排印精修：字重 / 字距 / 行高对比小样</h2>
+        <p class="section-subtitle">A / B / C 三档标题参数并排测试，点击小卡可将对应参数实时投射至下方主视觉</p>
+      </div>
+
+      <div class="split-layout">
+        <!-- 左侧：展示区 -->
+        <div class="showcase-area">
+          <div class="hero-compare-grid">
+            <!-- 方案 A -->
+            <div class="typo-specimen-card" id="specimenA" onclick="selectHeroTypo('a')">
+              <span class="typo-badge">方案 A · 紧致冲击型</span>
+              <div class="typo-title-a"><span class="mark-word">标记</span>开源 AI 工具</div>
+              <p style="font-size:13px;color:var(--muted)">每天只留 100 个，逐条读官方文档，用人话讲清楚它是什么。</p>
+              <div class="typo-params">
+                <span class="param-pill">Weight: 900</span>
+                <span class="param-pill">Spacing: -0.065em</span>
+                <span class="param-pill">LineHeight: 1.04</span>
+              </div>
+            </div>
+
+            <!-- 方案 B (推荐) -->
+            <div class="typo-specimen-card active" id="specimenB" onclick="selectHeroTypo('b')">
+              <span class="typo-badge" style="color:var(--aqua)">方案 B · 舒展呼吸型 (主推)</span>
+              <div class="typo-title-b"><span class="mark-word">标记</span>开源 AI 工具</div>
+              <p style="font-size:13px;color:var(--muted)">每天只留 100 个，逐条读官方文档，用人话讲清楚它是什么。</p>
+              <div class="typo-params">
+                <span class="param-pill" style="border-color:var(--aqua);color:var(--ink)">Weight: 800</span>
+                <span class="param-pill" style="border-color:var(--aqua);color:var(--ink)">Spacing: -0.035em</span>
+                <span class="param-pill" style="border-color:var(--aqua);color:var(--ink)">LineHeight: 1.14</span>
+              </div>
+            </div>
+
+            <!-- 方案 C -->
+            <div class="typo-specimen-card" id="specimenC" onclick="selectHeroTypo('c')">
+              <span class="typo-badge">方案 C · 极简克制型</span>
+              <div class="typo-title-c"><span class="mark-word">标记</span>开源 AI 工具</div>
+              <p style="font-size:13px;color:var(--muted)">每天只留 100 个，逐条读官方文档，用人话讲清楚它是什么。</p>
+              <div class="typo-params">
+                <span class="param-pill">Weight: 700</span>
+                <span class="param-pill">Spacing: -0.015em</span>
+                <span class="param-pill">LineHeight: 1.22</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 主视觉渲染区 -->
+          <div class="hero-master-stage">
+            <h1 class="hero-display-h1 typo-title-b" id="masterHeroH1">
+              <span class="mark-word">标记</span>开源 AI 工具
+            </h1>
+            <p class="hero-display-p">
+              每天只留 100 个，逐条读官方文档，用<b>人话</b>讲清楚它是什么、能干嘛、适合谁。测试与避坑永久免费。
+            </p>
+          </div>
+        </div>
+
+        <!-- 右侧：设计批注 -->
+        <aside class="annotation-card">
+          <div class="annotation-header">
+            <span class="annotation-kicker">DESIGN NOTE · 01</span>
+            <span class="annotation-status">已选定方案 B</span>
+          </div>
+          <ul class="annotation-list">
+            <li><strong>为什么主推方案 B：</strong>800 字重既撑起首屏分量，又杜绝了 900 字重在中文回退时的“粗墨块”挤压感。</li>
+            <li><strong>微调节距：</strong>原版 -0.075em 在高分屏下导致汉字笔画过密，调整至 -0.035em 后，字符边界更清爽。</li>
+            <li><strong>行高 1.14：</strong>为折行及多语言预留了透气缝隙，保持紧凑凝聚的同时不显憋闷。</li>
+            <li><strong>严守唯一字体：</strong>全字重严格限定 Nunito 规范，绝对不混搭任何 serif 或斜体展示体。</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         专区 2: 暗色模式
+         ============================================================ -->
+    <section class="section-block" id="dark-mode">
+      <div class="section-header">
+        <span class="section-tag">EXPLORATION 02</span>
+        <h2 class="section-title">暗色模式：v5 夜间深黑与微光斑演进</h2>
+        <p class="section-subtitle">保持玻璃卡材质感，夜间将人物图衬以深色渐变与微光斑处理，右上角按钮可即时全局切换</p>
+      </div>
+
+      <div class="split-layout">
+        <!-- 左侧：展示区 -->
+        <div class="showcase-area">
+          <div class="darkmode-preview-grid">
+            <!-- 日间版样态 -->
+            <div class="mode-card mode-card-day">
+              <div class="mode-kicker">
+                <span style="color:var(--aqua)">☀️ 日间标准态 (Day Slot)</span>
+                <span style="font-size:11px;color:var(--muted)">背景 #040b18 · Panel 70%</span>
+              </div>
+              <p style="font-size:13px;color:var(--muted)">
+                自然通透的冷青天光，人物图在午间明亮 slot 下呈现通透空气感。
+              </p>
+              <div class="mode-sample-glass day-glass">
+                <strong style="font-size:14px;display:block;margin-bottom:4px">日间玻璃卡质感</strong>
+                <span style="font-size:12px;color:var(--muted)">1px var(--line) 描边 · 18px 背景高斯模糊</span>
+              </div>
+            </div>
+
+            <!-- 夜间版样态 -->
+            <div class="mode-card mode-card-night">
+              <div class="mode-kicker">
+                <span style="color:var(--lime)">🌙 深夜纯黑光斑态 (Night Slot)</span>
+                <span style="font-size:11px;color:var(--aqua)">背景 #01040a · Panel 82%</span>
+              </div>
+              <p style="font-size:13px;color:var(--muted)">
+                沉浸深黑底色，人物图叠加径向微光斑（Cyan 14% / Violet 10%），屏幕眩光直降 40%。
+              </p>
+              <div class="mode-sample-glass night-glass">
+                <strong style="font-size:14px;display:block;margin-bottom:4px;color:#ffffff">夜间纯净玻璃卡</strong>
+                <span style="font-size:12px;color:#8faec9">内敛微光散射 · 文字 ink 纯白对比度提升</span>
+              </div>
+            </div>
+          </div>
+          
+          <div style="margin-top:16px;text-align:center">
+            <button class="theme-toggle-btn" onclick="toggleTheme()" style="margin:auto">
+              <span>🌓</span> <span>点此在全屏即时测试日/夜切换效果</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 右侧：设计批注 -->
+        <aside class="annotation-card">
+          <div class="annotation-header">
+            <span class="annotation-kicker">DESIGN NOTE · 02</span>
+            <span class="annotation-status">日夜即时生效</span>
+          </div>
+          <ul class="annotation-list">
+            <li><strong>色彩守恒：</strong>坚决不增添任何外来色相，纯黑底色直接从 #040b18 衍生为 #01040a。</li>
+            <li><strong>光斑工艺：</strong>人物图在夜间模式被两道极低明度的径向光斑（Cyan/Violet）轻微托底，避免死黑。</li>
+            <li><strong>面板防眩：</strong>夜间面板不透明度提升至 82%，文字提高至 #ffffff，兼顾长时间阅读护眼需求。</li>
+            <li><strong>平滑过渡：</strong>所有色值变更在 0.4s 内完成，且不打断原有 22s 浮动动画节奏。</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         专区 3: 工具卡片微交互
+         ============================================================ -->
+    <section class="section-block" id="card-hover">
+      <div class="section-header">
+        <span class="section-tag">EXPLORATION 03</span>
+        <h2 class="section-title">工具卡片微交互：hover 时玻璃卡的 3 种反馈方案</h2>
+        <p class="section-subtitle">请用鼠标悬停各卡片体验：光泽扫过 vs 轻浮起+投影 vs 边框描光</p>
+      </div>
+
+      <div class="split-layout">
+        <!-- 左侧：展示区 -->
+        <div class="showcase-area">
+          <div class="interactions-row">
+            <!-- 方案 1: 光泽扫过 -->
+            <div class="demo-toolcard hover-opt-1">
+              <div>
+                <div class="demo-card-kicker">方案 1 · 镜面光泽扫过</div>
+                <h3>hermes-agent</h3>
+                <p>卡片原地不动，hover 时一道冷调镜面高光自左向右掠过，稳重大气不跳动。</p>
+              </div>
+              <div class="demo-card-footer">
+                <span class="demo-card-metric">↑3,531 / 7日</span>
+                <span class="demo-card-action">光泽划过 ↗</span>
+              </div>
+            </div>
+
+            <!-- 方案 2: 轻浮起 + 扩散投影 -->
+            <div class="demo-toolcard hover-opt-2">
+              <div>
+                <div class="demo-card-kicker" style="color:var(--aqua)">方案 2 · 轻浮起 + 柔影 (推荐)</div>
+                <h3>ollama</h3>
+                <p>继承 v5 经典物理手感：translateY(-5px) 上浮，底部扩散深色环境柔影。</p>
+              </div>
+              <div class="demo-card-footer">
+                <span class="demo-card-metric">★180.7k</span>
+                <span class="demo-card-action">触觉悬浮 ↗</span>
+              </div>
+            </div>
+
+            <!-- 方案 3: 边框描光 -->
+            <div class="demo-toolcard hover-opt-3">
+              <div>
+                <div class="demo-card-kicker">方案 3 · 边框描光聚拢</div>
+                <h3>firecrawl</h3>
+                <p>位置绝对静止，边框在 0.2s 内点亮为高纯度青蓝描边，内敛聚焦无抖动。</p>
+              </div>
+              <div class="demo-card-footer">
+                <span class="demo-card-metric">↑2,852 / 7日</span>
+                <span class="demo-card-action">轮廓点亮 ↗</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右侧：设计批注 -->
+        <aside class="annotation-card">
+          <div class="annotation-header">
+            <span class="annotation-kicker">DESIGN NOTE · 03</span>
+            <span class="annotation-status">主推方案 2 / 备选 3</span>
+          </div>
+          <ul class="annotation-list">
+            <li><strong>物理直觉优先：</strong>方案 2（轻浮起+柔影）给用户的触觉响应最明确，是 v5 玻璃质感的自然延伸。</li>
+            <li><strong>高密度友好：</strong>方案 3（边框描光）适合在移动端或密集表格中，避免页面上下颤动。</li>
+            <li><strong>动效红线：</strong>严格限定在 0.2s–0.25s ease，无任何夸张的果冻弹簧与滚轮干扰。</li>
+            <li><strong>无障碍适配：</strong>prefers-reduced-motion 下自动关闭浮动，仅保留安全边框色变。</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         专区 4: "Run this model" 按钮组件
+         ============================================================ -->
+    <section class="section-block" id="cta-button">
+      <div class="section-header">
+        <span class="section-tag">EXPLORATION 04</span>
+        <h2 class="section-title">"Run this model" 按钮组件：三态与外部跳转</h2>
+        <p class="section-subtitle">工具详情页主行动号召按钮，集成第三方服务商标识、外部跳转指示符与防重复加载态</p>
+      </div>
+
+      <div class="split-layout">
+        <!-- 左侧：展示区 -->
+        <div class="showcase-area">
+          <div class="cta-showcase-container">
+            <!-- 静态三态展示矩阵 -->
+            <div class="cta-matrix-grid">
+              <!-- 态 1: 默认 -->
+              <div class="cta-state-card">
+                <span class="cta-state-label">01 默认态 (Default)</span>
+                <button class="btn-run-model">
+                  <span>▶</span>
+                  <span>Run this model</span>
+                  <span class="provider-chip">DeepInfra</span>
+                  <span class="ext-icon">↗</span>
+                </button>
+                <span style="font-size:11.5px;color:var(--muted)">清晰展现服务商与跳转意图</span>
+              </div>
+
+              <!-- 态 2: Hover -->
+              <div class="cta-state-card">
+                <span class="cta-state-label" style="color:var(--aqua)">02 悬停态 (Hover Preview)</span>
+                <button class="btn-run-model state-hover">
+                  <span>▶</span>
+                  <span>Run this model</span>
+                  <span class="provider-chip">Novita</span>
+                  <span class="ext-icon">↗</span>
+                </button>
+                <span style="font-size:11.5px;color:var(--muted)">高光发散，右上箭头产生轻微位移</span>
+              </div>
+
+              <!-- 态 3: Loading -->
+              <div class="cta-state-card">
+                <span class="cta-state-label">03 加载/跳转中态 (Loading)</span>
+                <button class="btn-run-model state-loading" disabled>
+                  <span class="spinner"></span>
+                  <span>Connecting API...</span>
+                  <span class="provider-chip" style="opacity:0.6">OpenRouter</span>
+                </button>
+                <span style="font-size:11.5px;color:var(--muted)">内置禁用锁，防重复点击防抖</span>
+              </div>
+            </div>
+
+            <!-- 可交互沙盒测试 -->
+            <div class="cta-interactive-sandbox">
+              <div>
+                <strong style="font-size:14px;color:var(--ink)">在线沙盒实操：</strong>
+                <p class="sandbox-desc">点击右侧按钮亲自测试三态切换（点击将进入 2 秒加载模拟）</p>
+              </div>
+              <button id="interactiveCtaBtn" class="btn-run-model" onclick="testCtaLoading()">
+                <span id="ctaBtnIcon">▶</span>
+                <span id="ctaBtnText">Run this model</span>
+                <span class="provider-chip" id="ctaBtnChip">DeepInfra</span>
+                <span class="ext-icon" id="ctaBtnExt">↗</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右侧：设计批注 -->
+        <aside class="annotation-card">
+          <div class="annotation-header">
+            <span class="annotation-kicker">DESIGN NOTE · 04</span>
+            <span class="annotation-status">三态完备</span>
+          </div>
+          <ul class="annotation-list">
+            <li><strong>外链知情权：</strong>标配 ↗ 图标与服务商药丸胶囊，明确告知用户跳往外部基础设施，不搞暗度陈仓。</li>
+            <li><strong>悬停动效：</strong>悬停时 ↗ 图标产生 translate(2px, -2px) 位移，视觉心理暗示极其准确。</li>
+            <li><strong>加载防抖：</strong>加载态锁定点击（pointer-events: none），转动细线 Spinner 符合极简审美。</li>
+            <li><strong>纯净配色：</strong>按钮背景依然恪守 14% 的 --aqua 透明度底，拒绝高饱和刺眼色块。</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         专区 5: Playground 模块占位
+         ============================================================ -->
+    <section class="section-block" id="playground">
+      <div class="section-header">
+        <span class="section-tag">EXPLORATION 05</span>
+        <h2 class="section-title">Playground 试玩区占位：UI 骨架与信息架构</h2>
+        <p class="section-subtitle">站内轻量模型体验台：模型切换器 + 输入区 + 参数栏 + 结构化输出面板</p>
+      </div>
+
+      <div class="split-layout">
+        <!-- 左侧：展示区 -->
+        <div class="showcase-area">
+          <div class="playground-skeleton">
+            <!-- 顶部控制台 -->
+            <div class="pg-topbar">
+              <div class="pg-model-select">
+                <span class="pg-label">TARGET MODEL:</span>
+                <select class="pg-dropdown" id="pgModelSelector" onchange="updatePgModel()">
+                  <option value="deepseek">DeepSeek-V3 (671B MoE)</option>
+                  <option value="qwen">Qwen-2.5-72B-Instruct</option>
+                  <option value="llama">Llama-3.3-70B-Turbo</option>
+                </select>
+              </div>
+
+              <div class="pg-specs">
+                <span>API Endpoint: <span class="pg-spec-tag">deepinfra/v1</span></span>
+                <span>Latency: <span class="pg-spec-tag">~310ms</span></span>
+                <span>Speed: <span class="pg-spec-tag">84 tok/s</span></span>
+              </div>
+            </div>
+
+            <!-- 主体验区：输入与输出分栏 -->
+            <div class="pg-body">
+              <!-- 左侧输入栏 -->
+              <div class="pg-input-col">
+                <div>
+                  <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+                    <span style="font-size:12px;font-weight:700;color:var(--muted)">PROMPT / 输入提示词</span>
+                    <span style="font-size:11px;color:var(--aqua)">System Prompt: Enabled</span>
+                  </div>
+                  <textarea class="pg-textarea" id="pgInput" placeholder="输入要测试的任务，例如：对比 vLLM 与 Ollama 在单卡 24G 显存下的并发吞吐差异..."></textarea>
+                </div>
+
+                <div class="pg-input-footer">
+                  <span class="token-counter"><span id="pgTokenCount" class="tabular">128</span> / 4096 tokens</span>
+                  <button class="pg-run-btn" onclick="simulatePgRun()">运行试玩 ⌘↵</button>
+                </div>
+              </div>
+
+              <!-- 右侧模拟输出区 -->
+              <div class="pg-output-col">
+                <div>
+                  <div class="pg-output-header">
+                    <span style="font-size:12px;font-weight:800;letter-spacing:0.08em;color:var(--muted)">STREAMING OUTPUT</span>
+                    <span class="pg-output-meta" id="pgMetaBadge">READY · 0.0s</span>
+                  </div>
+                  <div class="pg-output-text" id="pgOutputText">
+                    根据实测，vLLM 采用 PagedAttention 机制，在高并发请求下显存碎片率低，吞吐量约为 Ollama 的 2.4 倍；而 Ollama 针对本地单用户交互做了深度轻量优化，启动耗时更低、内存常驻仅 120MB...
+                  </div>
+                </div>
+
+                <div class="pg-output-footer">
+                  <button class="pg-mini-btn" onclick="copyPgOutput()">复制文本</button>
+                  <button class="pg-mini-btn">查看 RAW JSON</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右侧：设计批注 -->
+        <aside class="annotation-card">
+          <div class="annotation-header">
+            <span class="annotation-kicker">DESIGN NOTE · 05</span>
+            <span class="annotation-status">内嵌式架构</span>
+          </div>
+          <ul class="annotation-list">
+            <li><strong>拒绝弹窗黑盒：</strong>放弃阻断视线的 Modal 弹窗，采用原生面板嵌入，保持页面滚动顺畅。</li>
+            <li><strong>1:1.2 比例：</strong>输入与输出栏采用 1:1.2 黄金配比，为长文本代码输出留足视界。</li>
+            <li><strong>参数可感知：</strong>顶部集成清晰的真实推断指标（TTFT、tok/s），让开源极客一眼看出专业度。</li>
+            <li><strong>轻量级实现：</strong>纯 CSS Grid 弹性排布，在移动端自动折叠为上下堆叠，绝无多余依赖。</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         专区 6: 捐助 + 分站招募条
+         ============================================================ -->
+    <section class="section-block" id="community-banner">
+      <div class="section-header">
+        <span class="section-tag">EXPLORATION 06</span>
+        <h2 class="section-title">捐助 + 分站招募条：纯净支持与生态共建</h2>
+        <p class="section-subtitle">页尾前置横幅，融合“保持独立评审的干净捐助”与“申领二级域名共同推站”两大出口</p>
+      </div>
+
+      <div class="split-layout">
+        <!-- 左侧：展示区 -->
+        <div class="showcase-area">
+          <div class="community-banner">
+            <h3 class="banner-main-title">
+              Keep Open-Source AI Independent.<br>
+              <span class="mark-word">Co-host a Regional Node</span> with us.
+            </h3>
+
+            <div class="banner-grid">
+              <!-- 入口 1: 支持我们 -->
+              <div class="banner-pillar-card">
+                <div>
+                  <span class="pillar-tag">ETHICAL SPONSORSHIP</span>
+                  <h4 class="pillar-heading">Support Clean Curation</h4>
+                  <p class="pillar-prose">
+                    Zero paid rankings. Zero cloaked affiliate deals. Every single tool is tested by human hands. Help us keep independent benchmarking servers humming 24/7.
+                  </p>
+                </div>
+
+                <div>
+                  <div class="pillar-btn-row">
+                    <a href="mailto:marks@osmarks.com?subject=Sponsor%20osmarks" class="btn-solid-aqua">
+                      <span>Sponsor an Audit Node ↗</span>
+                    </a>
+                  </div>
+                  <div class="pillar-foot-note" style="margin-top:10px">
+                    Public ledger · Transparent breakdown · Direct founder contact
+                  </div>
+                </div>
+              </div>
+
+              <!-- 入口 2: 申领二级域名共同推站 -->
+              <div class="banner-pillar-card">
+                <div>
+                  <span class="pillar-tag" style="color:var(--lime)">GLOBAL EXPANSION</span>
+                  <h4 class="pillar-heading">Claim a Regional Subdomain</h4>
+                  <p class="pillar-prose">
+                    Are you running a developer community in Japan, Taiwan, Singapore or Europe? Claim <code>jp.osmarks.com</code> or <code>tw.osmarks.com</code> to localize and co-curate AI tools with revenue sharing.
+                  </p>
+                </div>
+
+                <div>
+                  <div class="pillar-btn-row">
+                    <a href="mailto:marks@osmarks.com?subject=Subdomain%20Partnership" class="btn-outline-glass">
+                      <span>Apply for Subdomain ↗</span>
+                    </a>
+                  </div>
+                  <div class="pillar-foot-note" style="margin-top:10px">
+                    Turnkey edge routing · Multi-language sync · Verified partner badge
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右侧：设计批注 -->
+        <aside class="annotation-card">
+          <div class="annotation-header">
+            <span class="annotation-kicker">DESIGN NOTE · 06</span>
+            <span class="annotation-status">双通道对等</span>
+          </div>
+          <ul class="annotation-list">
+            <li><strong>告别低效乞讨：</strong>将单纯要钱的赞助条，升级为“资金捐助 + 区域盟友”的双轮驱动架构。</li>
+            <li><strong>英文人话散文：</strong>严格遵守“赞助要赞助得干净，先过实测关，明码标价”，文案不讲虚词。</li>
+            <li><strong>统一基板：</strong>左右双卡置于同一块复合深色玻璃面板中，结构工整，避免页面尾部琐碎杂乱。</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         专区 7: rankings 表格升级小样
+         ============================================================ -->
+    <section class="section-block" id="rankings-v5">
+      <div class="section-header">
+        <span class="section-tag">EXPLORATION 07</span>
+        <h2 class="section-title">rankings 表格升级小样：v4 极光风向 v5 语言过渡</h2>
+        <p class="section-subtitle">肃清混杂衬线字体与过艳极光光效，重归纯净玻璃卡片、对齐数字与高密度专业秩序</p>
+      </div>
+
+      <div class="split-layout">
+        <!-- 左侧：展示区 -->
+        <div class="showcase-area">
+          <div class="rankings-stage">
+            <!-- 头部筛选与检索 -->
+            <div class="rankings-filter-row">
+              <div class="tab-pills">
+                <button class="tab-pill active" onclick="switchTableTab(this)">🔥 上升总榜 (Momentum)</button>
+                <button class="tab-pill" onclick="switchTableTab(this)">⭐ 星标总榜 (Stars)</button>
+                <button class="tab-pill" onclick="switchTableTab(this)">⚡ 7日大热 (Hot)</button>
+              </div>
+
+              <input type="text" class="rankings-search-box" placeholder="过滤项目或关键词..." oninput="filterTable(this.value)">
+            </div>
+
+            <!-- 表格本体 -->
+            <div style="overflow-x:auto">
+              <table class="rankings-table" id="rankingsTable">
+                <thead>
+                  <tr>
+                    <th style="width:48px">RANK</th>
+                    <th>TOOL / PROJECT & HUMAN SUMMARY</th>
+                    <th style="width:140px">CATEGORY</th>
+                    <th style="width:120px;text-align:right">METRIC</th>
+                    <th style="width:64px;text-align:right">ACTION</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Row 1 -->
+                  <tr>
+                    <td class="rank-cell top-1 tabular">01</td>
+                    <td class="tool-info-cell">
+                      <strong>openclaw</strong>
+                      <p>装在电脑上的个人 AI 助手，帮你跑腿干活，Windows、Mac 都能用。</p>
+                    </td>
+                    <td><span class="cat-badge">自动化与智能体</span></td>
+                    <td class="metric-cell tabular">
+                      <span>↑1,075 / 7d</span>
+                      <small>★389.5k total</small>
+                    </td>
+                    <td class="action-cell">
+                      <a href="../t/openclaw-openclaw.html" class="action-link">查看 ↗</a>
+                    </td>
+                  </tr>
+
+                  <!-- Row 2 -->
+                  <tr>
+                    <td class="rank-cell top-2 tabular">02</td>
+                    <td class="tool-info-cell">
+                      <strong>hermes-agent</strong>
+                      <p>会跟你一起成长的 AI 助手，用得越久越懂你的工作习惯与长期记忆。</p>
+                    </td>
+                    <td><span class="cat-badge">自动化与智能体</span></td>
+                    <td class="metric-cell tabular">
+                      <span>↑3,531 / 7d</span>
+                      <small>★244.6k total</small>
+                    </td>
+                    <td class="action-cell">
+                      <a href="../t/nousresearch-hermes-agent.html" class="action-link">查看 ↗</a>
+                    </td>
+                  </tr>
+
+                  <!-- Row 3 -->
+                  <tr>
+                    <td class="rank-cell top-3 tabular">03</td>
+                    <td class="tool-info-cell">
+                      <strong>n8n</strong>
+                      <p>拼积木式的自动化工具，收邮件、定时抓取、发通知全自动接通。</p>
+                    </td>
+                    <td><span class="cat-badge">自动化与智能体</span></td>
+                    <td class="metric-cell tabular">
+                      <span>↑849 / 7d</span>
+                      <small>★204.0k total</small>
+                    </td>
+                    <td class="action-cell">
+                      <a href="../t/n8n-io-n8n.html" class="action-link">查看 ↗</a>
+                    </td>
+                  </tr>
+
+                  <!-- Row 4 -->
+                  <tr>
+                    <td class="rank-cell tabular">04</td>
+                    <td class="tool-info-cell">
+                      <strong>ollama</strong>
+                      <p>在自己电脑上跑 AI 大模型的最简单办法，不花钱、断网也能跑。</p>
+                    </td>
+                    <td><span class="cat-badge">开发与数据</span></td>
+                    <td class="metric-cell tabular">
+                      <span>↑654 / 7d</span>
+                      <small>★180.7k total</small>
+                    </td>
+                    <td class="action-cell">
+                      <a href="../t/ollama-ollama.html" class="action-link">查看 ↗</a>
+                    </td>
+                  </tr>
+
+                  <!-- Row 5 -->
+                  <tr>
+                    <td class="rank-cell tabular">05</td>
+                    <td class="tool-info-cell">
+                      <strong>firecrawl</strong>
+                      <p>帮 AI 看懂网页的工具，把乱糟糟的网页洗成干干净净的 Markdown。</p>
+                    </td>
+                    <td><span class="cat-badge">开发与数据</span></td>
+                    <td class="metric-cell tabular">
+                      <span>↑2,852 / 7d</span>
+                      <small>★179.2k total</small>
+                    </td>
+                    <td class="action-cell">
+                      <a href="../t/firecrawl-firecrawl.html" class="action-link">查看 ↗</a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右侧：设计批注 -->
+        <aside class="annotation-card">
+          <div class="annotation-header">
+            <span class="annotation-kicker">DESIGN NOTE · 07</span>
+            <span class="annotation-status">极光转玻璃</span>
+          </div>
+          <ul class="annotation-list">
+            <li><strong>剔除乱象：</strong>全面废除 v4 中非法的 Instrument Serif 衬线斜体混排与重型彩虹渐变。</li>
+            <li><strong>等宽数字：</strong>排行号与统计项全面启用 <code>tabular-nums</code>，解决数字变动时的横向抖动。</li>
+            <li><strong>克制高光：</strong>前 3 名仅用青/紫微光标定权重，4-100 名回归纯净中性灰，层次鲜明。</li>
+            <li><strong>平滑过渡：</strong>行级 hover 仅注入 5% 透明度的青蓝高光，确保每分钟扫视 50 行不产生视疲劳。</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <!-- 页尾信息 -->
+    <footer class="lab-footer">
+      <div>
+        <span>osmarks.com · v6 视觉演进实验室稿 · 内部预览</span>
+      </div>
+      <div>
+        <span>遵守 DNA.md 宪法约束 · 仅创建 <code>public/labs/v6-draft.html</code> · 未变动任何线上代码</span>
+      </div>
+    </footer>
+  </main>
+
+  <!-- ============================================================
+       17. 交互脚本（零外部重库，原生稳定，支持双击离线）
+       ============================================================ -->
+  <script>
+    // 1. 日夜主题即时切换系统
+    var currentTheme = 'day';
+    function toggleTheme() {
+      var html = document.documentElement;
+      var btnLabel = document.getElementById('themeLabel');
+      var btnIcon = document.getElementById('themeIcon');
+      
+      if (currentTheme === 'day') {
+        currentTheme = 'night';
+        html.dataset.theme = 'night';
+        if (btnLabel) btnLabel.textContent = '当前：夜间模式（点击切日间）';
+        if (btnIcon) btnIcon.textContent = '🌙';
+      } else {
+        currentTheme = 'day';
+        html.dataset.theme = 'day';
+        if (btnLabel) btnLabel.textContent = '当前：日间模式（点击切夜间）';
+        if (btnIcon) btnIcon.textContent = '☀️';
+      }
+    }
+
+    var themeBtn = document.getElementById('themeToggleBtn');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', toggleTheme);
+    }
+
+    // 2. Hero 排印小样动态切换
+    function selectHeroTypo(variant) {
+      var h1 = document.getElementById('masterHeroH1');
+      var cardA = document.getElementById('specimenA');
+      var cardB = document.getElementById('specimenB');
+      var cardC = document.getElementById('specimenC');
+
+      [cardA, cardB, cardC].forEach(function(el) {
+        if (el) el.classList.remove('active');
+      });
+
+      if (variant === 'a') {
+        if (cardA) cardA.classList.add('active');
+        if (h1) {
+          h1.className = 'hero-display-h1 typo-title-a';
+          h1.style.fontWeight = '900';
+          h1.style.letterSpacing = '-0.065em';
+          h1.style.lineHeight = '1.04';
+        }
+      } else if (variant === 'b') {
+        if (cardB) cardB.classList.add('active');
+        if (h1) {
+          h1.className = 'hero-display-h1 typo-title-b';
+          h1.style.fontWeight = '800';
+          h1.style.letterSpacing = '-0.035em';
+          h1.style.lineHeight = '1.14';
+        }
+      } else if (variant === 'c') {
+        if (cardC) cardC.classList.add('active');
+        if (h1) {
+          h1.className = 'hero-display-h1 typo-title-c';
+          h1.style.fontWeight = '700';
+          h1.style.letterSpacing = '-0.015em';
+          h1.style.lineHeight = '1.22';
+        }
+      }
+    }
+
+    // 3. CTA 按钮实操沙盒模拟
+    var ctaTimer = null;
+    function testCtaLoading() {
+      var btn = document.getElementById('interactiveCtaBtn');
+      var icon = document.getElementById('ctaBtnIcon');
+      var text = document.getElementById('ctaBtnText');
+      var chip = document.getElementById('ctaBtnChip');
+      var ext = document.getElementById('ctaBtnExt');
+
+      if (!btn || btn.disabled) return;
+
+      // 切换至 Loading
+      btn.disabled = true;
+      btn.className = 'btn-run-model state-loading';
+      icon.innerHTML = '<span class="spinner" style="display:inline-block"></span>';
+      text.textContent = 'Connecting DeepInfra...';
+      chip.style.opacity = '0.5';
+      ext.style.display = 'none';
+
+      clearTimeout(ctaTimer);
+      ctaTimer = setTimeout(function() {
+        btn.disabled = false;
+        btn.className = 'btn-run-model';
+        icon.textContent = '▶';
+        text.textContent = 'Ready · Run this model';
+        chip.style.opacity = '1';
+        ext.style.display = 'inline';
+      }, 2000);
+    }
+
+    // 4. Playground 模拟互动
+    var MODEL_INFOS = {
+      deepseek: { speed: '84 tok/s', latency: '~310ms', endpoint: 'deepinfra/v1' },
+      qwen: { speed: '96 tok/s', latency: '~260ms', endpoint: 'novita/v1' },
+      llama: { speed: '110 tok/s', latency: '~220ms', endpoint: 'openrouter/v1' }
+    };
+
+    function updatePgModel() {
+      var sel = document.getElementById('pgModelSelector');
+      var badge = document.getElementById('pgMetaBadge');
+      if (!sel) return;
+      var info = MODEL_INFOS[sel.value] || MODEL_INFOS.deepseek;
+      if (badge) {
+        badge.textContent = 'SWITCHED · ' + info.speed + ' · ' + info.latency;
+      }
+    }
+
+    function simulatePgRun() {
+      var input = document.getElementById('pgInput');
+      var output = document.getElementById('pgOutputText');
+      var badge = document.getElementById('pgMetaBadge');
+      var count = document.getElementById('pgTokenCount');
+
+      if (!output) return;
+      var prompt = (input && input.value.trim()) ? input.value.trim() : '测试对比开源模型推理特性';
+      
+      output.innerHTML = '<span style="color:var(--aqua)">[Streaming...]</span> 模型正在实时响应中...';
+      if (badge) badge.textContent = 'GENERATING · 92 tok/s';
+
+      setTimeout(function() {
+        output.textContent = '针对提示词【' + prompt.slice(0, 30) + '...】的推断完成：该模型展现了极佳的长上下文指令遵从能力，首包延迟仅 168ms，显存带宽占用平稳。';
+        if (badge) badge.textContent = 'COMPLETED · 184 tokens · 320ms TTFT';
+        if (count) count.textContent = '218';
+      }, 700);
+    }
+
+    function copyPgOutput() {
+      var output = document.getElementById('pgOutputText');
+      if (output && navigator.clipboard) {
+        navigator.clipboard.writeText(output.textContent).then(function() {
+          alert('已复制输出内容至剪贴板');
+        }).catch(function() {
+          alert('复制失败，请手动选择');
+        });
+      }
+    }
+
+    // 5. 表格标签与过滤
+    function switchTableTab(btn) {
+      var pills = document.querySelectorAll('.tab-pill');
+      pills.forEach(function(p) { p.classList.remove('active'); });
+      if (btn) btn.classList.add('active');
+    }
+
+    function filterTable(keyword) {
+      var rows = document.querySelectorAll('#rankingsTable tbody tr');
+      var kw = (keyword || '').toLowerCase().trim();
+      rows.forEach(function(row) {
+        var text = row.textContent.toLowerCase();
+        if (!kw || text.indexOf(kw) !== -1) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

@@ -36,9 +36,11 @@ try {
   }
 
   // 第一步: 实时调用 whoami 取授权人 ID（不使用历史保存的 chat_id）
+  // 注意: whoami 输出是 JSON，extra_identity_context 里的换行是字面 "\n" 两字符，
+  // 因此绝不能用 \S+ 贪婪匹配（会把 "\nCLI" 一起吞进去），必须只取 ID 合法字符
   const raw = runCli(['identity', 'whoami']);
   let chatId = null;
-  const m1 = raw.match(/授权真人用户身份[\s\S]*?ID[：:]\s*(\S+)/);
+  const m1 = raw.match(/授权真人用户身份[\s\S]*?ID[：:]\s*([A-Za-z0-9_\-]+)/);
   if (m1) chatId = m1[1];
   if (!chatId) {
     // 兜底: 取文本中最后一个长 ID（授权人 ID 出现在机器人 ID 之后）

@@ -1,0 +1,11 @@
+2026-09-19T07:26:18.081Z FAIL Command failed: C:\Users\Administrator\.workbuddy\binaries\node\versions\22.22.2-3\node.exe C:/Users/Administrator/.workbuddy/binaries/node/cli-connector-packages/node_modules/@wecom/cli/bin/wecom.js message aibot send --json {"chat_id":"wopXxSRQAAKpholhO86iY6uJa_QfbWYw\\nCLI","msg_type":"markdown","markdown":{"content":"# osmarks 全链路验收报告\n\n时间：2026-09-19 15:30 前后\n\n**✅ 静态页生成**\n主站（Dify/RAGFlow 企业旗舰页）+ 企业定制落地页，每 6 小时自动重建，14 项页面校验全过\n\n**✅ GitHub 仓库**\ngithub.com/calvinguo721/osmarks.com\n提交线 d2860ac → 74e8e1e → 33c1d72 → 07c9596，全部已推送，push 免密\n\n**✅ Cloudflare Pages 部署**\n全链路实测通过（生成 → Git → 部署 → 通报）\n生产地址 https://master.osmarks.pages.dev\n本次快照 https://239f79da.osmarks.pages.dev\n企业页 https://master.osmarks.pages.dev/enterprise/\n\n**✅ 自动化流水线已固化**\n生成静态页 → Git 提交推送 → Cloudflare 部署 → 微信通报，四环每 6 小时自动转，已写入定时任务\n\n**⚠️ 自定义域名 osmarks.com 差一步**\nCloudflare 侧绑定与 SSL 证书已就绪（项目域名列表确认 active）\n当前 DNS 解析仍指向旧版站点（「标记最先进的 AI 工具」那个旧版），切换需要 Zone.DNS 写权限，wrangler 授权不含这一项\n两个方案任选其一，详情在工作对话里，选完我 5 分钟内完成切换并复测"}} | stdout: {
+  "error": {
+    "code": 40073,
+    "message": "非法的 'chat_id', 请重新检查'chat_id'的值是否正确 (callid: 1789802775301703884726297)"
+  }
+}
+
+2026-09-19T07:30:17.515Z OK -> wopXxSRQAAKpholhO86iY6uJa_QfbWYw resp: {
+  "extra_identity_context": "<extra_identity_context>\n机器人身份：\n名字：马克斯\nID：aibWj0RkqC9P5fIu4bX69gI_Jc4vaDXQ0H_\n授权真人用户身份：\n名字：郭茹胜  \nID：wopXxSRQAAKpholhO86iY6uJa_QfbWYw\nCLI 调用一定由你的机器人身份代用户执行。真人授权用户创
+2026-09-19T07:52:34.552Z OK -> wopXxSRQAAKpholhO86iY6uJa_QfbWYw resp: {
+  "extra_identity_context": "<extra_identity_context>\n机器人身份：\n名字：马克斯\nID：aibWj0RkqC9P5fIu4bX69gI_Jc4vaDXQ0H_\n授权真人用户身份：\n名字：郭茹胜  \nID：wopXxSRQAAKpholhO86iY6uJa_QfbWYw\nCLI 调用一定由你的机器人身份代用户执行。真人授权用户创

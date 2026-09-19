@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>开源马克斯 osmarks.com · 普通人视角的 AI 工具严选与避坑排雷</title>
+<meta name="description" content="开源马克斯是全网首席 AI 踩坑大师建立的 AI 工具严选站。只收历史总榜 Top100 和近 7 天热议前 100，测试排雷永久免费，不接软文不收充钱上榜。每条避坑短评都是真实踩坑换来的。">
+<meta name="keywords" content="AI工具推荐,AI工具避坑,AI工具评测,开源马克斯,osmarks,AI排雷,AI工具排行榜">
+<meta property="og:title" content="开源马克斯 · 普通人视角的 AI 工具严选">
+<meta property="og:description" content="踩过 500+ 个坑之后，我把真正能打、稳定、不坑钱的工具挑出来给你。测试排雷永久免费，不接软文。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://osmarks.com/">
+<link rel="canonical" href="https://osmarks.com/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23ff5c33'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='%23fff' font-family='sans-serif' font-weight='bold'%3EM%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#090d16;
+  --bg2:#0e1422;
+  --card:#131b2e;
+  --card-hover:#182238;
+  --line:#233047;
+  --text:#e8edf5;
+  --muted:#8b98ad;
+  --accent:#ff5c33;
+  --accent2:#ffb020;
+  --green:#3ecf8e;
+  --radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+
+/* 品牌头 */
+header.site{
+  position:sticky;top:0;z-index:50;
+  background:rgba(9,13,22,.86);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.site .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px}
+.brand .logo{
+  width:34px;height:34px;border-radius:9px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:19px;color:#fff;font-weight:900;
+}
+.brand .tld{color:var(--muted);font-weight:600;font-size:15px;margin-left:2px}
+nav.top{display:flex;gap:6px}
+nav.top a{
+  padding:8px 14px;border-radius:9px;font-size:14px;color:var(--muted);
+  transition:all .18s;
+}
+nav.top a:hover{color:var(--text);background:var(--card)}
+nav.top a.hot{color:var(--accent2)}
+@media(max-width:720px){nav.top{display:none}}
+
+/* Hero */
+.hero{padding:72px 0 48px;text-align:center;position:relative;overflow:hidden}
+.hero::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(600px 260px at 50% -60px,rgba(255,92,51,.16),transparent 70%);
+}
+.hero .kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 16px;border:1px solid var(--line);border-radius:999px;
+  font-size:13px;color:var(--accent2);background:rgba(255,176,32,.06);
+  margin-bottom:22px;
+}
+.hero h1{font-size:clamp(30px,5.4vw,52px);font-weight:900;letter-spacing:-.5px;line-height:1.25}
+.hero h1 .grad{
+  background:linear-gradient(100deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero p.sub{max-width:640px;margin:18px auto 0;color:var(--muted);font-size:16.5px}
+.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:40px;text-align:left}
+@media(max-width:760px){.rules{grid-template-columns:1fr}}
+.rule{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px 22px;transition:all .2s;
+}
+.rule:hover{border-color:#33456a;transform:translateY(-2px)}
+.rule .rt{font-weight:800;font-size:15.5px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.rule .rt .dot{width:8px;height:8px;border-radius:50%}
+.rule p{font-size:13.5px;color:var(--muted)}
+.rule.r1 .dot{background:var(--green)} .rule.r2 .dot{background:var(--accent2)} .rule.r3 .dot{background:var(--accent)}
+
+/* Tabs + 搜索 */
+.toolbar{padding:26px 0 18px;position:sticky;top:64px;z-index:40;background:linear-gradient(var(--bg),var(--bg) 82%,transparent)}
+.toolbar .wrap{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.tabs{display:flex;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:4px;gap:4px}
+.tab{
+  padding:8px 18px;border-radius:8px;font-size:14px;color:var(--muted);font-weight:600;
+  transition:all .18s;white-space:nowrap;
+}
+.tab:hover{color:var(--text)}
+.tab.on{background:linear-gradient(135deg,var(--accent),#ff7a4d);color:#fff}
+.searchbox{
+  flex:1;min-width:220px;display:flex;align-items:center;gap:10px;
+  background:var(--card);border:1px solid var(--line);border-radius:11px;padding:9px 14px;
+  transition:border-color .18s;
+}
+.searchbox:focus-within{border-color:var(--accent)}
+.searchbox svg{flex-shrink:0;opacity:.5}
+.searchbox input{
+  flex:1;background:none;border:none;outline:none;color:var(--text);font-size:14.5px;min-width:0;
+}
+.searchbox input::placeholder{color:var(--muted)}
+.count{font-size:13px;color:var(--muted);white-space:nowrap}
+.count b{color:var(--accent2)}
+
+/* 工具卡 */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;padding-bottom:26px}
+@media(max-width:680px){.grid{grid-template-columns:1fr}}
+.tool{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px 20px;position:relative;transition:all .2s;
+  display:flex;flex-direction:column;gap:9px;
+}
+.tool:hover{background:var(--card-hover);border-color:#33456a;transform:translateY(-2px)}
+.tool .row1{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.tool h3{font-size:16px;font-weight:800}
+.tool .rank{
+  flex-shrink:0;font-size:12px;font-weight:800;color:var(--accent2);
+  background:rgba(255,176,32,.09);border:1px solid rgba(255,176,32,.25);
+  padding:2px 9px;border-radius:999px;
+}
+.tool .cat{font-size:12px;color:var(--muted)}
+.tool .desc{font-size:13.5px;color:var(--muted)}
+.tool .verdict{
+  font-size:13.5px;color:var(--text);
+  background:rgba(255,92,51,.07);border-left:3px solid var(--accent);
+  padding:8px 12px;border-radius:0 8px 8px 0;
+}
+.tool .tags{display:flex;gap:6px;flex-wrap:wrap}
+.tool .tag{font-size:11.5px;color:var(--muted);background:var(--bg2);border:1px solid var(--line);padding:2px 9px;border-radius:999px}
+.tool .tag.free{color:var(--green);border-color:rgba(62,207,142,.3)}
+.badge7{
+  position:absolute;top:-9px;right:14px;font-size:11px;font-weight:800;color:#090d16;
+  background:linear-gradient(120deg,var(--accent2),#ffd066);padding:3px 10px;border-radius:999px;
+}
+.empty{grid-column:1/-1;text-align:center;padding:50px 0;color:var(--muted)}
+
+/* 数据说明条 */
+.demo-note{
+  margin:6px 0 10px;font-size:13px;color:var(--muted);
+  background:var(--bg2);border:1px dashed var(--line);border-radius:10px;
+  padding:10px 16px;display:flex;gap:8px;align-items:center;
+}
+
+/* 视频区 */
+.video-sec{padding:44px 0}
+.sec-title{font-size:24px;font-weight:900;margin-bottom:6px}
+.sec-sub{color:var(--muted);font-size:14px;margin-bottom:22px}
+.video-card{
+  display:grid;grid-template-columns:1.5fr 1fr;gap:0;overflow:hidden;
+  border:1px solid var(--line);border-radius:var(--radius);background:var(--card);
+}
+@media(max-width:760px){.video-card{grid-template-columns:1fr}}
+.video-shell{position:relative;aspect-ratio:16/9;background:#05080f}
+.video-shell video{width:100%;height:100%;object-fit:cover;display:block}
+.video-poster{
+  position:absolute;inset:0;display:flex;flex-direction:column;gap:12px;
+  align-items:center;justify-content:center;cursor:pointer;
+  background:
+    radial-gradient(400px 200px at 70% 30%,rgba(255,92,51,.18),transparent),
+    linear-gradient(160deg,#0c1322,#05080f);
+}
+.video-poster .play{
+  width:66px;height:66px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 30px rgba(255,92,51,.4);transition:transform .2s;
+}
+.video-poster:hover .play{transform:scale(1.08)}
+.video-meta{padding:24px;display:flex;flex-direction:column;gap:12px;justify-content:center}
+.video-meta .vt{font-size:17px;font-weight:800}
+.video-meta p{font-size:13.5px;color:var(--muted)}
+.pnp-btn{
+  align-self:flex-start;padding:9px 18px;border-radius:9px;font-size:13.5px;font-weight:700;
+  background:var(--bg2);border:1px solid var(--line);color:var(--text);transition:all .18s;
+  display:inline-flex;gap:7px;align-items:center;
+}
+.pnp-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.pnp-btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* 出海四大件 */
+.abroad{padding:44px 0 30px}
+.abroad-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:860px){.abroad-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.abroad-grid{grid-template-columns:1fr}}
+.ab{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px;transition:all .2s;position:relative;
+}
+.ab:hover{border-color:#33456a;transform:translateY(-2px)}
+.ab .ico{font-size:26px;margin-bottom:10px}
+.ab h4{font-size:15px;font-weight:800;margin-bottom:6px}
+.ab p{font-size:12.5px;color:var(--muted);margin-bottom:10px}
+.ab .soon{font-size:11.5px;color:var(--accent2);font-weight:700}
+.ab .aff{position:absolute;top:12px;right:12px;font-size:10.5px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 8px}
+
+/* 自荐区 */
+.suggest{padding:44px 0 20px}
+.suggest-box{
+  background:linear-gradient(135deg,rgba(255,92,51,.1),rgba(255,176,32,.06));
+  border:1px solid rgba(255,92,51,.3);border-radius:var(--radius);
+  padding:34px 30px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
+}
+.suggest-box h3{font-size:20px;font-weight:900;margin-bottom:8px}
+.suggest-box p{font-size:13.5px;color:var(--muted);max-width:560px}
+.suggest-btn{
+  padding:13px 30px;border-radius:11px;font-size:15px;font-weight:800;color:#fff;
+  background:linear-gradient(135deg,var(--accent),#ff7a4d);
+  box-shadow:0 6px 22px rgba(255,92,51,.35);transition:transform .18s;
+  white-space:nowrap;
+}
+.suggest-btn:hover{transform:translateY(-2px)}
+
+/* Footer */
+footer.site{margin-top:50px;border-top:1px solid var(--line);padding:36px 0 46px;background:var(--bg2)}
+footer .wrap{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap}
+footer .col{font-size:13px;color:var(--muted)}
+footer .col b{display:block;color:var(--text);margin-bottom:9px;font-size:14px}
+footer a:hover{color:var(--text)}
+footer .law{font-size:12px;color:#5b6880;margin-top:6px}
+
+/* 弹窗 */
+.modal-mask{
+  position:fixed;inset:0;z-index:100;background:rgba(4,7,13,.7);backdrop-filter:blur(4px);
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.modal-mask.open{display:flex}
+.modal{
+  width:100%;max-width:520px;background:var(--card);border:1px solid var(--line);
+  border-radius:18px;padding:28px;position:relative;max-height:90vh;overflow-y:auto;
+  animation:pop .22s ease;
+}
+@keyframes pop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+.modal h3{font-size:19px;font-weight:900;margin-bottom:6px}
+.modal .msub{font-size:13px;color:var(--muted);margin-bottom:20px}
+.modal .close{
+  position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:18px;
+}
+.modal .close:hover{background:var(--bg2);color:var(--text)}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text)}
+.field input,.field textarea,.field select{
+  width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:9px;
+  padding:10px 13px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:border-color .18s;
+}
+.field input:focus,.field textarea:focus{border-color:var(--accent)}
+.field textarea{resize:vertical;min-height:84px}
+.modal .submit{
+  width:100%;padding:13px;border-radius:10px;font-size:15px;font-weight:800;color:#fff;
+  background:linear-gradient(135deg,var(--accent),#ff7a4d);margin-top:6px;
+}
+.modal .done{
+  display:none;text-align:center;padding:26px 6px;
+}
+.modal .done .big{font-size:40px;margin-bottom:12px}
+.modal .done p{font-size:14px;color:var(--muted);margin-bottom:16px}
+.modal .done .copytip{
+  font-size:13px;color:var(--green);background:rgba(62,207,142,.08);
+  border:1px solid rgba(62,207,142,.3);border-radius:9px;padding:10px 14px;margin-bottom:16px;
+  word-break:break-all;text-align:left;display:none;
+}
+.copy-btn{
+  padding:10px 22px;border-radius:9px;font-size:13.5px;font-weight:700;
+  background:var(--bg2);border:1px solid var(--line);color:var(--text);
+}
+.copy-btn:hover{border-color:var(--green);color:var(--green)}
+
+/* toast */
+.toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--card);border:1px solid var(--green);color:var(--text);
+  padding:12px 22px;border-radius:11px;font-size:14px;z-index:200;
+  opacity:0;transition:all .3s;pointer-events:none;
+}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+</style>
+</head>
+<body>
+
+<!-- 品牌头 -->
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <span class="logo">马</span>
+      开源马克斯<span class="tld">osmarks.com</span>
+    </a>
+    <nav class="top">
+      <a href="#tools" class="on">工具榜</a>
+      <a href="#video" class="hot">视频排雷</a>
+      <a href="#abroad">出海四大件</a>
+      <a href="#suggest">工具自荐</a>
+      <a href="#about">关于我</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="wrap">
+    <span class="kicker">⚡ 全网首席 AI 踩坑大师 · 已替你踩过 500+ 个坑</span>
+    <h1>AI 工具千千万<br>我先踩坑<span class="grad">你抄近道</span></h1>
+    <p class="sub">我不当导师也不恰饭吹工具。每个工具我自己真金白银测过，哪里卡死人、哪里吹牛皮，直说。能留下来的，才是真帮你省时间的那批。</p>
+    <div class="rules">
+      <div class="rule r1">
+        <div class="rt"><span class="dot"></span>绝对克制</div>
+        <p>只收历史总榜 Top100 和近 7 天热议前 100。名单永远这么短，进了就说明真值得。</p>
+      </div>
+      <div class="rule r2">
+        <div class="rt"><span class="dot"></span>绝对中立</div>
+        <p>前端 MIT 开源，测试排雷永久免费。不接软文，不收充钱上榜，谁给我钱都改不了排名。</p>
+      </div>
+      <div class="rule r3">
+        <div class="rt"><span class="dot"></span>坦荡盈利</div>
+        <p>推荐位明码标价走官方 affiliate，你从链接进去我拿佣金，价格不变。企业定制单独收费。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Tabs + 搜索 -->
+<section class="toolbar" id="tools">
+  <div class="wrap">
+    <div class="tabs" role="tablist">
+      <button class="tab on" data-filter="all" role="tab">全部</button>
+      <button class="tab" data-filter="top100" role="tab">Top100 总榜</button>
+      <button class="tab" data-filter="hot7d" role="tab">7 天热议 🔥</button>
+    </div>
+    <div class="searchbox">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="search" type="text" placeholder="搜工具名、用途、坑点，回车即达">
+    </div>
+    <div class="count">收录 <b id="count">0</b> 个</div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="demo-note">📋 当前为建站演示数据版，正式榜单随首期全网实测评测上线，标准不变，只收 Top100 与 7 天热议前 100。</div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<!-- 视频排雷 -->
+<section class="video-sec" id="video">
+  <div class="wrap">
+    <h2 class="sec-title">视频排雷 · 画中画陪你边干边看</h2>
+    <p class="sec-sub">口播视频我本人出镜，讲哪工具哪里坑。支持画中画，小窗挂着不耽误你干活。</p>
+    <div class="video-card">
+      <div class="video-shell">
+        <video id="demoVideo" poster="" playsinline preload="metadata"></video>
+        <div class="video-poster" id="poster">
+          <div class="play">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+          <span style="font-size:13px;color:var(--muted)">首期口播 · TimesFM 时序预测排雷实录 · 制作中</span>
+        </div>
+      </div>
+      <div class="video-meta">
+        <div class="vt">TimesFM 上手实录，这些坑我全踩了</div>
+        <p>Google 家的时序预测模型看着香，真跑起来环境、依赖、参数全是坑。我把报错和补丁一条条写在排雷页里，视频随后跟上。</p>
+        <a href="timesfm.html" class="pnp-btn" style="text-decoration:none">先看图文排雷 →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 出海四大件 -->
+<section class="abroad" id="abroad">
+  <div class="wrap">
+    <h2 class="sec-title">出海四大件 · 我自用的基建</h2>
+    <p class="sec-sub">做站、跑 AI、收款绕不开的四样。全部走官方 affiliate，你花一样的钱，我拿点佣金，坦坦荡荡。</p>
+    <div class="abroad-grid">
+      <div class="ab">
+        <span class="aff">affiliate</span>
+        <div class="ico">🖥️</div>
+        <h4>海外云服务器</h4>
+        <p>境外节点部署与加速的底座，稳定压倒一切。</p>
+        <span class="soon">实测后上架</span>
+      </div>
+      <div class="ab">
+        <span class="aff">affiliate</span>
+        <div class="ico">🔑</div>
+        <h4>AI API 接入</h4>
+        <p>模型能力即插即用，价格和限流我帮你盯。</p>
+        <span class="soon">实测后上架</span>
+      </div>
+      <div class="ab">
+        <span class="aff">affiliate</span>
+        <div class="ico">🌐</div>
+        <h4>独立域名邮箱</h4>
+        <p>对外业务的可信身份，别再用 QQ 邮箱发 proposal。</p>
+        <span class="soon">实测后上架</span>
+      </div>
+      <div class="ab">
+        <span class="aff">affiliate</span>
+        <div class="ico">💸</div>
+        <h4>跨境收款</h4>
+        <p>钱到不了手都是白干，收款链路先跑通。</p>
+        <span class="soon">实测后上架</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 自荐 -->
+<section class="suggest" id="suggest">
+  <div class="wrap">
+    <div class="suggest-box">
+      <div>
+        <h3>你的工具凭什么上榜？</h3>
+        <p>我是 Upack 创作者存证通道的指定自荐入口。自荐免费，收不收看我实测结果，不看出身不看粉丝数。</p>
+      </div>
+      <button class="suggest-btn" id="openSuggest">提交自荐</button>
+    </div>
+  </div>
+</section>
+
+<!-- 关于 -->
+<section class="video-sec" id="about" style="padding-top:20px">
+  <div class="wrap">
+    <h2 class="sec-title">关于马克斯</h2>
+    <p class="sec-sub" style="max-width:680px">一个被 AI 工具坑了太多回的普通人，干脆把自己踩坑的过程全记下来。拆穿虚假宣传，指出卡死人的地方，只推少数真正测过、稳定好用的。评测排雷全公开免费，只有企业私有化定制收服务费。少废话，直接说事。</p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="site">
+  <div class="wrap">
+    <div class="col">
+      <b>开源马克斯</b>
+      普通人视角的 AI 工具严选<br>
+      <span class="law">© 2026 osmarks.com · 前端 MIT 开源</span>
+    </div>
+    <div class="col">
+      <b>三铁律</b>
+      只收 Top100 与 7 天热议<br>
+      排雷免费 · 不接软文 · 不收充钱上榜
+    </div>
+    <div class="col">
+      <b>盈利方式</b>
+      出海四大件官方 affiliate<br>
+      企业私有化定制 · 收费坦荡
+    </div>
+  </div>
+</footer>
+
+<!-- 自荐弹窗 -->
+<div class="modal-mask" id="suggestModal">
+  <div class="modal">
+    <button class="close" id="closeSuggest">✕</button>
+    <div id="formView">
+      <h3>创作者自荐</h3>
+      <p class="msub">填好这四项，生成自荐文本发给我就行。全免费，也不保证收录。</p>
+      <div class="field">
+        <label>工具名称 *</label>
+        <input id="fName" type="text" placeholder="工具叫什么">
+      </div>
+      <div class="field">
+        <label>工具链接 *</label>
+        <input id="fUrl" type="url" placeholder="https:// 开头">
+      </div>
+      <div class="field">
+        <label>分类</label>
+        <select id="fCat">
+          <option>AI 编程</option><option>AI 写作</option><option>AI 绘图</option>
+          <option>AI 视频</option><option>AI 搜索</option><option>效率工具</option>
+          <option>其他</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>一句话说清它强在哪 *</label>
+        <textarea id="fWhy" placeholder="别喊口号，讲真本事，最好带上你的真实使用场景"></textarea>
+      </div>
+      <button class="submit" id="genText">生成自荐文本</button>
+    </div>
+    <div class="done" id="doneView">
+      <div class="big">✅</div>
+      <p>自荐文本已生成，复制后发到下方邮箱即可。</p>
+      <div class="copytip" id="copyTip"></div>
+      <p style="font-weight:700;color:var(--text)">hi@osmarks.com</p>
+      <button class="copy-btn" id="copyBtn">一键复制</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---- 榜单数据（建站演示版） ---- */
+const TOOLS = [
+  {name:"TimesFM", cat:"AI 数据预测", desc:"Google 开源时序预测模型，零样本直接出预测", verdict:"环境是最大的坑，补丁我写在排雷页了", tags:["开源","免费","本地部署"], rank:91, hot:false, link:"timesfm.html"},
+  {name:"DeepSeek", cat:"AI 编程", desc:"国产模型之光，写代码、讲算法都很顶", verdict:"免费额度香，高峰期排队要有耐心", tags:["免费","中文友好"], rank:1, hot:true, link:"#"},
+  {name:"Claude", cat:"AI 编程", desc:"长文理解与代码质量目前的第一梯队", verdict:"贵是真的贵，但改 bug 的水平也是真行", tags:["付费","编程首选"], rank:2, hot:true, link:"#"},
+  {name:"ChatGPT", cat:"AI 全能", desc:"生态最全的六边形战士，插件和联网都有", verdict:"免费版够日常，4o 之外别乱充钱", tags:["免费版可用"], rank:3, hot:false, link:"#"},
+  {name:"Gemini", cat:"AI 全能", desc:"Google 全家桶联动，长上下文一骑绝尘", verdict:"国内访问是门槛，AIP 方案我视频里讲", tags:["免费额度大"], rank:4, hot:false, link:"#"},
+  {name:"Midjourney", cat:"AI 绘图", desc:"出图审美天花板，商业出图还在用它", verdict:"没有免费午餐，充值前先看我的参数教程", tags:["付费","审美在线"], rank:5, hot:true, link:"#"},
+  {name:"可灵 AI", cat:"AI 视频", desc:"国产视频生成黑马，动作一致性很能打", verdict:"积分烧得快，脚本不写好别乱点生成", tags:["免费额度","中文友好"], rank:6, hot:true, link:"#"},
+  {name:"Perplexity", cat:"AI 搜索", desc:"带引用来源的 AI 搜索，告别一本正经胡说", verdict:"英文搜索强，中文信源偶尔拉胯", tags:["免费版可用"], rank:7, hot:false, link:"#"},
+  {name:"Suno", cat:"AI 音乐", desc:"一句话出完整歌曲，喊麦写歌两不误", verdict:"商用授权要看套餐，白嫖党注意", tags:["免费额度"], rank:8, hot:false, link:"#"},
+  {name:"Notion AI", cat:"效率工具", desc:"笔记加 AI 一体化，知识库管理顺手", verdict:"加钱才香，纯白嫖不如本地笔记", tags:["付费","团队友好"], rank:9, hot:false, link:"#"},
+  {name:"即梦 AI", cat:"AI 绘图", desc:"字节出品，中文理解和人像生成很稳", verdict:"免费额度大方，商用前看清条款", tags:["免费额度","中文友好"], rank:10, hot:true, link:"#"},
+  {name:"Ollama", cat:"本地部署", desc:"一条命令本地跑大模型，数据不出门", verdict:"显存不够全靠量化，低配机先跑小杯", tags:["开源","免费","隐私"], rank:11, hot:false, link:"#"}
+];
+
+/* ---- 渲染 ---- */
+const grid = document.getElementById('grid');
+const countEl = document.getElementById('count');
+let curFilter = 'all';
+let curSearch = '';
+
+function render(){
+  const kw = curSearch.trim().toLowerCase();
+  const list = TOOLS.filter(t=>{
+    if(curFilter==='top100' && !t.rank) return false;
+    if(curFilter==='hot7d' && !t.hot) return false;
+    if(kw){
+      const hay = (t.name+' '+t.cat+' '+t.desc+' '+t.verdict+' '+t.tags.join(' ')).toLowerCase();
+      if(!hay.includes(kw)) return false;
+    }
+    return true;
+  });
+  grid.innerHTML = list.length ? list.map(t=>`
+    <article class="tool">
+      ${t.hot?'<span class="badge7">7天热议</span>':''}
+      <div class="row1">
+        <h3><a href="${t.link}">${t.name}</a></h3>
+        <span class="rank">#${t.rank}</span>
+      </div>
+      <div class="cat">${t.cat}</div>
+      <div class="desc">${t.desc}</div>
+      <div class="verdict">⚡ ${t.verdict}</div>
+      <div class="tags">${t.tags.map(x=>`<span class="tag ${x==='免费'||x.includes('免费')?'free':''}">${x}</span>`).join('')}</div>
+    </article>
+  `).join('') : `<div class="empty">没搜到。这词要么不在榜，要么坑太大我还没写完 😅</div>`;
+  countEl.textContent = list.length;
+}
+render();
+
+/* ---- Tabs ---- */
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+    curFilter = btn.dataset.filter;
+    render();
+  });
+});
+
+/* ---- 搜索 ---- */
+document.getElementById('search').addEventListener('input',e=>{
+  curSearch = e.target.value;
+  render();
+});
+
+/* ---- 视频画中画 ---- */
+const video = document.getElementById('demoVideo');
+const poster = document.getElementById('poster');
+poster.addEventListener('click',()=>{
+  toast('首期口播正在录制，先看图文排雷更过瘾');
+});
+if(!document.pictureInPictureEnabled || !video.requestPictureInPicture){
+  // 不支持的环境直接禁用按钮，避免点了没反应
+}
+
+/* ---- 自荐弹窗 ---- */
+const modal = document.getElementById('suggestModal');
+document.getElementById('openSuggest').onclick = ()=>{ modal.classList.add('open'); };
+document.getElementById('closeSuggest').onclick = ()=>{ modal.classList.remove('open'); };
+modal.addEventListener('click',e=>{ if(e.target===modal) modal.classList.remove('open'); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') modal.classList.remove('open'); });
+
+let generated = '';
+document.getElementById('genText').onclick = ()=>{
+  const n = document.getElementById('fName').value.trim();
+  const u = document.getElementById('fUrl').value.trim();
+  const c = document.getElementById('fCat').value;
+  const w = document.getElementById('fWhy').value.trim();
+  if(!n || !u || !w){ toast('名称、链接和理由是必填的'); return; }
+  generated = `【工具自荐】${n}\n链接 ${u}\n分类 ${c}\n推荐理由 ${w}\n来自 osmarks.com 自荐通道`;
+  document.getElementById('copyTip').textContent = generated;
+  document.getElementById('copyTip').style.display = 'block';
+  document.getElementById('formView').style.display = 'none';
+  document.getElementById('doneView').style.display = 'block';
+};
+document.getElementById('copyBtn').onclick = async ()=>{
+  try{
+    await navigator.clipboard.writeText(generated);
+    toast('已复制，发到 hi@osmarks.com 就行');
+  }catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = generated; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy'); ta.remove();
+    toast('已复制，发到 hi@osmarks.com 就行');
+  }
+};
+
+/* ---- toast ---- */
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+</script>
+</body>
+</html>

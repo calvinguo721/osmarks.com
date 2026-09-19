@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /rising.html
+Disallow: /starred.html
+
+Sitemap: https://osmarks.com/sitemap.xml

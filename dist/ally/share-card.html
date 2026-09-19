@@ -1,0 +1,137 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>分发弹药库 · 生成你的专属分享卡｜osmarks 分站联盟</title>
+<meta name="description" content="输入你的分站名，一秒生成带炫耀元素的专属分享图：你的名字.osmarks.com、分主编号、直达二维码。竖版横版一键下载。">
+<link rel="canonical" href="https://osmarks.com/ally/share-card.html">
+<meta name="robots" content="index,follow">
+<meta property="og:title" content="分发弹药库 · 生成你的专属分享卡｜osmarks">
+<meta property="og:description" content="一秒生成带你分站名的分享图，竖版横版一键下载。">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<style>
+@font-face{font-family:'Nunito';src:url('../assets/fonts/Nunito-400.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Nunito';src:url('../assets/fonts/Nunito-700.woff2') format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:'Nunito';src:url('../assets/fonts/Nunito-800.woff2') format('woff2');font-weight:800;font-display:swap}
+@font-face{font-family:'Nunito';src:url('../assets/fonts/Nunito-900.woff2') format('woff2');font-weight:900;font-display:swap}
+:root{--ink:#eaf4ff;--muted:#9db4d0;--aqua:#39d8ff;--lime:#d78cff;--panel:rgba(18,32,58,.55);--line:rgba(137,205,255,.20)}
+*{box-sizing:border-box}
+body{margin:0;background:#040b18;color:var(--ink);font-family:'Nunito','M PLUS Rounded 1c','Arial Rounded MT Bold',system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;line-height:1.55}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+.nav{border-bottom:1px solid var(--line);padding:16px 0}
+.brand{font-size:22px;letter-spacing:-.05em;color:var(--ink);text-decoration:none;font-weight:400}
+.brand b{font-weight:800;color:var(--lime)}
+h1{font-size:clamp(26px,4vw,40px);letter-spacing:-.04em;margin:26px 0 8px;font-weight:900}
+h1 .hl{color:var(--lime)}
+.sub{color:var(--muted);font-size:15px;margin:0 0 22px}
+.ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:18px 0 8px}
+.ctl input{background:var(--panel);border:1px solid var(--line);border-radius:999px;color:var(--ink);padding:10px 16px;font-size:15px;font-family:inherit;outline:none}
+.ctl input:focus{border-color:rgba(57,216,255,.5)}
+.ctl button{background:rgba(57,216,255,.08);border:1px solid var(--line);border-radius:999px;color:var(--ink);padding:10px 18px;font-size:14px;font-family:inherit;cursor:pointer;font-weight:700}
+.ctl button:hover{border-color:rgba(57,216,255,.5);transform:translateY(-1px)}
+.ctl button.primary{background:rgba(215,140,255,.14);border-color:rgba(215,140,255,.45)}
+#cv{display:block;width:100%;max-width:520px;border-radius:18px;border:1px solid var(--line);margin:18px 0 8px;background:#040b18}
+.tiny{color:var(--muted);font-size:12.5px;margin:8px 0 40px}
+.tiny a{color:var(--aqua)}
+#dl{display:none;margin:0 0 40px}
+</style>
+</head><body>
+<header class="nav"><div class="wrap"><a class="brand" href="../index.html">os<b>marks</b></a> · <a href="../ally.html" style="color:var(--muted);text-decoration:none;font-size:14px">返回分站联盟</a></div></header>
+<main class="wrap">
+<h1>分发弹药库 · <span class="hl">专属分享卡</span></h1>
+<p class="sub">填上你的分站名和分主编号，一秒生成你的专属分享图。图里有可以炫耀的一切：你的域名、你的编号、直达二维码。发群里、发朋友圈、当封面，随便用。</p>
+<div class="ctl">
+  <input id="name" type="text" placeholder="分站名，比如 laowang" maxlength="24" aria-label="分站名">
+  <input id="no" type="text" placeholder="分主编号，比如 007" maxlength="6" style="width:150px" aria-label="分主编号">
+  <button id="genV" type="button" class="primary">生成竖版卡</button>
+  <button id="genH" type="button">生成横版卡</button>
+  <a id="dl" class="ctl button primary" style="display:none;text-decoration:none" download="osmarks-share-card.png">下载这张卡</a>
+</div>
+<canvas id="cv" width="1080" height="1440"></canvas>
+<p class="tiny">编号还没拿到？<a href="../ally.html#apply">先申领分站</a> · 想要能动的？去 <a href="promo-video.html">推广视频生成器</a></p>
+</main>
+<script src="../assets/qrcode.min.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const cv=$('#cv'),ctx=cv.getContext('2d');
+const url=t=>'https://'+t+'.osmarks.com';
+function qrDataURL(text,size){
+  try{const q=qrcode(0,'M');q.addData(text);q.make();
+    const n=q.getModuleCount(),c=document.createElement('canvas'),x=c.getContext('2d');
+    const quiet=4,cell=Math.ceil(size/(n+quiet*2));
+    c.width=c.height=(n+quiet*2)*cell;x.fillStyle='#040b18';x.fillRect(0,0,c.width,c.height);
+    x.fillStyle='#eaf4ff';
+    for(let r=0;r<n;r++)for(let col=0;col<n;col++)if(q.isDark(r,col))x.fillRect((col+quiet)*cell,(r+quiet)*cell,cell,cell);
+    return c;
+  }catch(e){return null}
+}
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function aurora(W,H){
+  ctx.fillStyle='#040b18';ctx.fillRect(0,0,W,H);
+  const blob=(cx,cy,r,c)=>{const g=ctx.createRadialGradient(cx,cy,0,cx,cy,r);g.addColorStop(0,c);g.addColorStop(1,'rgba(4,11,24,0)');ctx.fillStyle=g;ctx.fillRect(0,0,W,H)};
+  blob(W*.82,H*.14,W*.62,'rgba(215,140,255,.24)');
+  blob(W*.12,H*.88,W*.60,'rgba(57,216,255,.17)');
+  blob(W*.55,H*.45,W*.75,'rgba(64,110,255,.10)');
+}
+function brand(x,y,s){ctx.textBaseline='alphabetic';ctx.font=`800 ${s}px Nunito, sans-serif`;ctx.fillStyle='#eaf4ff';const w1=ctx.measureText('os').width;ctx.font=`400 ${s}px Nunito, sans-serif`;ctx.fillText('os',x,y);ctx.font=`800 ${s}px Nunito, sans-serif`;ctx.fillStyle='#d78cff';ctx.fillText('marks',x+w1,y)}
+function fitText(t,maxW,base,fam,wt){let s=base;ctx.font=`${wt} ${s}px ${fam}`;while(ctx.measureText(t).width>maxW&&s>18){s-=2;ctx.font=`${wt} ${s}px ${fam}`}return s}
+function chip(x,y,t){ctx.font='700 24px Nunito, sans-serif';const w=ctx.measureText(t).width+44;rr(x,y,w,52,26);ctx.fillStyle='rgba(137,205,255,.10)';ctx.fill();ctx.strokeStyle='rgba(137,205,255,.30)';ctx.stroke();ctx.fillStyle='#9db4d0';ctx.textBaseline='middle';ctx.fillText(t,x+22,y+27);return w}
+async function drawCard(vertical){
+  const name=($('#name').value||'yourname').trim().replace(/[^a-zA-Z0-9_-]/g,'')||'yourname';
+  const no=($('#no').value||'').trim();
+  const W=vertical?1080:1200,H=vertical?1440:630;
+  if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H}
+  try{await document.fonts.load(`900 100px Nunito`);await document.fonts.load(`700 24px Nunito`)}catch(e){}
+  aurora(W,H);
+  const site=url(name);
+  if(vertical){
+    brand(70,120,44);
+    ctx.fillStyle='#9db4d0';ctx.font='700 26px Nunito, sans-serif';ctx.textBaseline='middle';
+    ctx.fillText(no?('分主 No.'+no):'分站联盟伙伴',70,180);
+    ctx.textBaseline='alphabetic';
+    ctx.font=`900 66px Nunito, sans-serif`;ctx.fillStyle='#eaf4ff';
+    ctx.fillText('开源 AI 工具',70,420);
+    ctx.fillText('讲成人话的榜单',70,510);
+    const s1=fitText(name,640,120,'Nunito',900);
+    ctx.font=`900 ${s1}px Nunito, sans-serif`;ctx.fillStyle='#d78cff';
+    ctx.fillText(name,70,700);
+    const w1=ctx.measureText(name).width;
+    const s2=fitText('.osmarks.com',W-140-w1,120,'Nunito',800);
+    ctx.font=`800 ${s2}px Nunito, sans-serif`;ctx.fillStyle='#eaf4ff';
+    ctx.fillText('.osmarks.com',70+w1,700);
+    ctx.font='700 30px Nunito, sans-serif';ctx.fillStyle='#9db4d0';ctx.fillText('由我亲自精选排雷，点进来直接能用',70,790);
+    let cx=70;cx+=chip(cx,880,'100+ 工具实测')+14;cx+=chip(cx,880,'双榜 Top100')+14;chip(cx,880,'每周更新');
+    const qc=qrDataURL(site,300);
+    const gy=H-330;
+    rr(70,gy,560,220,30);ctx.fillStyle='rgba(18,32,58,.55)';ctx.fill();ctx.strokeStyle='rgba(137,205,255,.25)';ctx.stroke();
+    if(qc)ctx.drawImage(qc,100,gy+40,140,140);
+    ctx.textBaseline='middle';ctx.fillStyle='#eaf4ff';ctx.font='800 34px Nunito, sans-serif';
+    ctx.fillText('扫码直达我的分站',280,gy+88);
+    ctx.fillStyle='#9db4d0';ctx.font='700 24px Nunito, sans-serif';
+    ctx.fillText(site,280,gy+140);
+    ctx.fillStyle='#5b7191';ctx.font='700 22px Nunito, sans-serif';
+    ctx.fillText('osmarks.com · 开源马克斯',70,H-46);
+  }else{
+    brand(70,110,40);
+    const s1=fitText(name,560,92,'Nunito',900);
+    ctx.font=`900 ${s1}px Nunito, sans-serif`;ctx.fillStyle='#d78cff';ctx.fillText(name,70,270);
+    const w1=ctx.measureText(name).width;
+    const s2=fitText('.osmarks.com',W-140-w1-70,92,'Nunito',800);
+    ctx.font=`800 ${s2}px Nunito, sans-serif`;ctx.fillStyle='#eaf4ff';ctx.fillText('.osmarks.com',70+w1,270);
+    ctx.font='900 52px Nunito, sans-serif';ctx.fillStyle='#eaf4ff';ctx.fillText('开源 AI 工具 · 讲成人话的榜单',70,390);
+    let cx=70;cx+=chip(cx,440,'100+ 工具实测')+14;cx+=chip(cx,440,'双榜 Top100')+14;chip(cx,440,no?('分主 No.'+no):'每周更新');
+    const qc=qrDataURL(site,260);
+    const qx=W-270,qy=H/2-120;
+    rr(qx-24,qy-24,248,288,26);ctx.fillStyle='rgba(18,32,58,.55)';ctx.fill();ctx.strokeStyle='rgba(137,205,255,.25)';ctx.stroke();
+    if(qc)ctx.drawImage(qc,qx,qy,200,200);
+    ctx.textBaseline='middle';ctx.fillStyle='#9db4d0';ctx.font='700 22px Nunito, sans-serif';ctx.fillText('扫码直达',qx+100,qy+236);
+    ctx.fillStyle='#5b7191';ctx.font='700 20px Nunito, sans-serif';ctx.fillText('osmarks.com · 开源马克斯',70,H-36);
+  }
+  const dl=$('#dl');dl.style.display='inline-block';
+  dl.href=cv.toDataURL('image/png');
+  dl.download=`osmarks-${name}-${vertical?'portrait':'landscape'}.png`;
+}
+$('#genV').onclick=()=>drawCard(true).catch(e=>alert('生成失败：'+e.message));
+$('#genH').onclick=()=>drawCard(false).catch(e=>alert('生成失败：'+e.message));
+if(location.hash==='#demo'){$('#name').value='laowang';$('#no').value='007';drawCard(true).catch(()=>{})}
+</script>
+</body></html>
