@@ -280,3 +280,8 @@ section.block:first-of-type{border-top:0}
 /* ---- 项目图（GitHub 官方卡）---- */
 .tool-cover{margin:20px 0 4px}
 .tool-cover img{width:100%;display:block;border-radius:var(--radius);border:1px solid var(--line);background:var(--panel)}
+
+/* 防横向溢出兜底（所有内核） */
+html{overflow-x:hidden;max-width:100%}
+body{max-width:100%;overflow-x:hidden}
+img,video,iframe,table,pre,svg{max-width:100%}
