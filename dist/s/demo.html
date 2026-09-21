@@ -36,11 +36,28 @@
   border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);
   overflow:hidden;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)
 }
-.sp-video .frame{position:relative;background:#000;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center}
+.sp-video .frame{position:relative;background:
+  radial-gradient(120% 120% at 18% 12%,rgba(57,216,255,.16),transparent 55%),
+  radial-gradient(120% 120% at 85% 88%,rgba(215,140,255,.15),transparent 55%),
+  var(--bg-2);
+  aspect-ratio:16/9;display:flex;align-items:center;justify-content:center}
 .sp-video .frame .play{
   width:66px;height:66px;border-radius:50%;border:1px solid var(--line-strong);
   background:rgba(57,216,255,.14);display:flex;align-items:center;justify-content:center;
   color:var(--aqua);font-size:22px
+}
+.frame-tag{
+  position:absolute;left:12px;bottom:12px;font-size:11px;color:var(--dim);
+  border:1px solid var(--line);border-radius:999px;padding:3px 10px;
+  background:color-mix(in srgb,var(--bg) 55%,transparent)
+}
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+main{overflow-wrap:break-word}
+code{overflow-wrap:anywhere}
+@media(max-width:640px){
+  .tbl{font-size:12.5px}
+  .tbl th,.tbl td{padding:8px 8px}
+  .sp-cta{padding:11px 12px}
 }
 .sp-video .meta{padding:18px 20px;display:flex;flex-direction:column;gap:10px}
 .sp-video .meta p{margin:0;color:var(--muted);font-size:13.5px}
@@ -110,6 +127,7 @@
   <span class="kicker">PRICE · 明码</span>
   <h2 class="h2">多少钱，写在这儿</h2>
   <p class="sub">价格由我本人负责。报价里不含云厂商和通道方要收的钱，那部分按官方价单实报实销、票据齐全。</p>
+  <div class="tbl-scroll">
   <table class="tbl" style="margin-top:18px">
     <thead><tr><th>类型</th><th>交付内容</th><th>周期</th><th>价格</th></tr></thead>
     <tbody>
@@ -118,6 +136,7 @@
       <tr><td>迁移与备份搬家</td><td>整站迁移 + 前后可用性对比</td><td>2–3 个工作日</td><td>¥ 2,600 起</td></tr>
     </tbody>
   </table>
+  </div>
   <p class="sp-note">超出以上范围的活，我会先给你一个明确报价再动手；谈不拢就不接，不靠模糊报价兜着。</p>
 </section>
 
@@ -137,7 +156,7 @@
   <h2 class="h2">我的活儿，我自己讲</h2>
   <p class="sub">视频发在我自己的账号上，播放量归我；这一页只嵌一条回来给想看的人。</p>
   <div class="sp-video" style="margin-top:18px">
-    <div class="frame"><div class="play">▶</div></div>
+    <div class="frame"><div class="play">▶</div><span class="frame-tag">视频位示意 · 正式页替换为你的视频</span></div>
     <div class="meta">
       <h3 style="margin:0;font-size:18px">12 分钟拆一次真实的出海配置</h3>
       <p>从买机器到域名能访问，每一步我做了什么、花了多少钱、哪一步最容易踩坑。</p>
