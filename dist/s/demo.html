@@ -1,0 +1,186 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>服务者主页模板示例｜老王·中小企业出海基建落地｜osmarks</title>
+<meta name="description" content="osmarks 服务者主页模板示例：能做什么、多少钱、做过什么、《我不做什么》，四块填完就是一张干净的服务页。视频嵌外部，收单入口固定在这一页。">
+<link rel="canonical" href="https://osmarks.com/s/demo.html">
+<meta name="theme-color" content="#040b18">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/osmarks.css">
+<style>
+/* ---- 服务者主页模板：自足的一段样式，正式页可整段复制 ---- */
+.sp-hero{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;padding:30px 0 6px}
+.sp-avatar{
+  width:96px;height:96px;border-radius:50%;flex:0 0 96px;
+  border:1px solid var(--line-strong);background:var(--bg-2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:34px;font-weight:800;color:var(--aqua);letter-spacing:-.05em
+}
+.sp-head{flex:1 1 320px;min-width:0}
+.sp-head h1{font-size:clamp(26px,3.6vw,38px);margin:0 0 8px}
+.sp-head .tagline{color:var(--muted);font-size:15.5px;margin:0 0 14px;max-width:640px}
+.sp-badges{display:flex;gap:8px;flex-wrap:wrap}
+.sp-badges .badge{background:var(--panel)}
+.sp-cta{
+  position:sticky;top:66px;z-index:30;margin:18px 0 0;
+  display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+  border:1px solid var(--line-strong);border-radius:var(--radius);
+  background:color-mix(in srgb,var(--bg-2) 88%,transparent);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  padding:13px 16px
+}
+.sp-cta .who{font-size:13.5px;color:var(--muted);flex:1 1 220px;min-width:0}
+.sp-cta .who b{color:var(--ink)}
+.sp-video{
+  border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);
+  overflow:hidden;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)
+}
+.sp-video .frame{position:relative;background:#000;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center}
+.sp-video .frame .play{
+  width:66px;height:66px;border-radius:50%;border:1px solid var(--line-strong);
+  background:rgba(57,216,255,.14);display:flex;align-items:center;justify-content:center;
+  color:var(--aqua);font-size:22px
+}
+.sp-video .meta{padding:18px 20px;display:flex;flex-direction:column;gap:10px}
+.sp-video .meta p{margin:0;color:var(--muted);font-size:13.5px}
+.sp-note{font-size:12px;color:var(--dim);margin-top:10px}
+.sp-sign{
+  border:1px dashed var(--line-strong);border-radius:var(--radius);
+  padding:18px 20px;background:var(--panel)
+}
+.sp-sign h3{margin:0 0 10px;font-size:17px}
+.sp-sign ul{margin:0;padding-left:20px;color:var(--muted);font-size:13.5px;line-height:1.9}
+.sp-sign .sig{margin-top:14px;font-size:12.5px;color:var(--dim);font-family:var(--mono)}
+.sp-tpl{
+  border:1px solid color-mix(in srgb,var(--warn) 40%,transparent);border-radius:var(--radius-sm);
+  background:var(--panel);padding:13px 16px;font-size:13px;color:var(--muted);margin-top:8px
+}
+@media(max-width:820px){
+  .sp-video{grid-template-columns:1fr}
+  .sp-cta{top:58px}
+}
+</style>
+</head><body><header class="nav"><div class="wrap nav-inner">
+<a class="brand" href="../index.html">os<b>marks</b></a>
+<nav class="nav-links">
+<a href="../rankings.html">榜单</a>
+<a href="../infra.html">出海基建</a>
+<a href="../ally.html">分站联盟</a>
+<a href="../join.html" aria-current="page">服务者入驻</a>
+<a href="../about.html">关于</a>
+</nav></div></header><main class="wrap">
+<div class="crumb"><a href="../index.html">首页</a><span>/</span><a href="../join.html">服务者入驻</a><span>/</span>主页模板示例</div>
+
+<div class="sp-tpl">
+  <b style="color:var(--warn)">这是一张模板示例。</b> 正式页由服务者本人填写、本人维护；平台只抓两件事：四项材料齐不齐、红线有没有踩。下面「老王」为虚构示例，用于演示版式。
+</div>
+
+<section class="sp-hero">
+  <div class="sp-avatar">王</div>
+  <div class="sp-head">
+    <h1>老王 <span class="dim" style="font-size:16px;font-weight:400">· 中小企业出海基建落地</span></h1>
+    <p class="tagline">帮你把「服务器、域名、CDN、收款」这四件事从零配到能跑起来。不做 PPT 方案，直接上线交付，交付完给你一份可自查的配置清单。</p>
+    <div class="sp-badges">
+      <span class="badge ok">身份与主体已核</span>
+      <span class="badge ok">案例已核</span>
+      <span class="badge ok">《我不做什么》已签</span>
+      <span class="badge doc">价格口径已登记</span>
+    </div>
+  </div>
+</section>
+
+<div class="sp-cta">
+  <span class="who">要办这事，直接找 <b>老王</b> 本人。下单与付款在你们之间直达，<b>平台不代收货款</b>。</span>
+  <a class="btn primary" href="mailto:laowang@example.com?subject=%E5%92%A8%E8%AF%A2%EF%BC%9A%E5%87%BA%E6%B5%B7%E5%9F%BA%E5%BB%BA%E8%90%BD%E5%9C%B0">找他办事</a>
+</div>
+
+<section class="block">
+  <span class="kicker">WHAT I DO</span>
+  <h2 class="h2">我能做什么</h2>
+  <div class="grid g2" style="margin-top:18px">
+    <div class="card"><h3>出海四件套落地</h3><p>云主机选型与开通、域名与 DNS、CDN 与证书、海外收款通道接入。按你的业务量给方案，能省的地方直接告诉你省。</p></div>
+    <div class="card"><h3>上线验收清单</h3><p>交付时给一份逐条可自查的清单：哪个面板看什么数、出问题先查哪儿。你团队接手能看懂。</p></div>
+    <div class="card"><h3>已上线站点的排障</h3><p>访问慢、证书报错、区域打不开——按次排查，先给结论再动手。</p></div>
+    <div class="card"><h3>迁移与备份搬家</h3><p>从旧服务商整站搬走，数据与配置一起过，搬完对比前后可用性。</p></div>
+  </div>
+</section>
+
+<section class="block">
+  <span class="kicker">PRICE · 明码</span>
+  <h2 class="h2">多少钱，写在这儿</h2>
+  <p class="sub">价格由我本人负责。报价里不含云厂商和通道方要收的钱，那部分按官方价单实报实销、票据齐全。</p>
+  <table class="tbl" style="margin-top:18px">
+    <thead><tr><th>类型</th><th>交付内容</th><th>周期</th><th>价格</th></tr></thead>
+    <tbody>
+      <tr><td>出海四件套落地</td><td>选型 + 开通配置 + 验收清单</td><td>3–5 个工作日</td><td>¥ 4,800 起</td></tr>
+      <tr><td>已上线站点排障</td><td>定位问题 + 给出结论 + 可选修复</td><td>1–2 个工作日</td><td>¥ 800 / 次</td></tr>
+      <tr><td>迁移与备份搬家</td><td>整站迁移 + 前后可用性对比</td><td>2–3 个工作日</td><td>¥ 2,600 起</td></tr>
+    </tbody>
+  </table>
+  <p class="sp-note">超出以上范围的活，我会先给你一个明确报价再动手；谈不拢就不接，不靠模糊报价兜着。</p>
+</section>
+
+<section class="block">
+  <span class="kicker">PROOF · 案例</span>
+  <h2 class="h2">做过什么</h2>
+  <div class="card" style="margin-top:18px">
+    <h3>某跨境小团队｜从卡到能动</h3>
+    <p>他们的独立站国内能打开、海外客户打不开，收款通道也一直没批下来。我重配了 DNS 与 CDN，把证书和区域解析理顺，又对接了一家能走通的收款通道。<b>结果：海外三个重点区域可正常访问，收款上线；他们自己在后台能查数。</b></p>
+    <p style="margin-top:10px"><span class="chip">可对得上人</span> <span class="chip">对方可被咨询</span> <span class="chip">含失败项：第一次通道申请被拒，换了一家</span></p>
+  </div>
+  <p class="sp-note">案例的真实性由平台核过：人、事、结果三项能对上。平台不替这个案例的效果背书，只保证它发生过。</p>
+</section>
+
+<section class="block">
+  <span class="kicker">WORKS · 视频</span>
+  <h2 class="h2">我的活儿，我自己讲</h2>
+  <p class="sub">视频发在我自己的账号上，播放量归我；这一页只嵌一条回来给想看的人。</p>
+  <div class="sp-video" style="margin-top:18px">
+    <div class="frame"><div class="play">▶</div></div>
+    <div class="meta">
+      <h3 style="margin:0;font-size:18px">12 分钟拆一次真实的出海配置</h3>
+      <p>从买机器到域名能访问，每一步我做了什么、花了多少钱、哪一步最容易踩坑。</p>
+      <p class="sp-note" style="margin-top:0">此处嵌入外部播放器（B 站 / YouTube 内嵌），不占用平台存储。</p>
+      <div class="btn-row" style="margin-top:auto">
+        <a class="btn" href="#" onclick="return false">在 B 站观看</a>
+        <a class="btn" href="#" onclick="return false">在 YouTube 观看</a>
+      </div>
+    </div>
+  </div>
+  <p class="notice" style="margin-top:16px"><b>为什么不把视频放平台上：</b>平台没有网络视听节目服务的资质，替你存视频是违规的，我们不做。你的内容放你自己的账号上，反而更安全——账号是你的，随时能带走。</p>
+</section>
+
+<section class="block">
+  <span class="kicker">PLAIN TALK</span>
+  <h2 class="h2">《我不做什么》</h2>
+  <div class="sp-sign">
+    <h3>本人签字，一页纸</h3>
+    <ul>
+      <li>不接「只要结果、不许问过程」的单——那种单最后一定扯皮。</li>
+      <li>不接纯转包：我亲自做的活我认，转手给别人的活我不挂自己名字。</li>
+      <li>不承诺一定能通过审批、一定不被封——主管机关和平台方的决定，我保证不了。</li>
+      <li>预算低于 2,000 的定制活我不接，那钱不够把事做干净，接了是害你。</li>
+      <li>干砸了怎么办：定位问题是我的问题就免费返工；确认超出我能力的，退你未做部分的钱，并把活转介给我信得过的人。</li>
+    </ul>
+    <div class="sig">签署人：老王 ｜ 签署日期：2026-09-21 ｜ 版本：v1</div>
+  </div>
+  <p class="sp-note">这一页不改、不美化，原文随服务页一起公示。改动要重新签字、重新公示，历史版本留存。</p>
+</section>
+
+<section class="block">
+  <span class="kicker">FINE PRINT</span>
+  <h2 class="h2">几句话交代清楚</h2>
+  <div class="grid g2" style="margin-top:18px">
+    <div class="card"><h3>这页谁在维护</h3><p>本页内容由老王本人填写与维护，平台只做四项材料的核验与红线的抽查。<b>页面上的说法，责任在服务者本人。</b></p></div>
+    <div class="card"><h3>钱怎么走</h3><p>你与老王直接签约、直接付款，<b>货款不经平台转手</b>。平台若向你收取明码的服务费，会在下单前单独列明，与货款分开。</p></div>
+    <div class="card"><h3>有争议怎么办</h3><p>先找老王本人协商；协商不成，把你手上的证据发到 <a href="mailto:marks@osmarks.com" style="color:var(--aqua)">marks@osmarks.com</a>，我们公开记录、协助对质，<b>但不做担保、不垫付。</b></p></div>
+    <div class="card"><h3>这是模板第几版</h3><p>模板 v1，2026-09-21。想用这张页的，去<a href="../join.html#apply" style="color:var(--aqua)">服务者入驻</a>申领，我们把可编辑版发你。</p></div>
+  </div>
+</section>
+</main><footer class="footer"><div class="wrap footer" style="border:0;padding:0">
+<span>本页为服务者主页模板示例 · 内容与数据由服务者本人负责</span>
+<span><a href="../about.html">关于与规则</a> · <a href="../ally.html">分站联盟</a> · <a href="../join.html">服务者入驻</a> · <a href="mailto:marks@osmarks.com">marks@osmarks.com</a></span>
+</div></footer>
+<script src="../assets/osmarks.js"></script>
+</body></html>
